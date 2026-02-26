@@ -50,11 +50,6 @@ function Student() {
         </div>
 
         <div className="input-box">
-          <label>Email</label>
-          <input type="email" placeholder="Email" />
-        </div>
-
-        <div className="input-box">
           <label>University Email</label>
           <input type="email" placeholder="Email" />
         </div>

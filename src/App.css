@@ -102,6 +102,7 @@ button:hover {
 
 .role {
   padding: 8px 18px;
+  color: #000;
   border-radius: 25px;
   border: 1px solid #ccc;
   background-color: #f1f1f1;
