@@ -2,28 +2,47 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "./auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import "./Dashboard.css";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState("");
-  const firstName = localStorage.getItem("firstName");
-const lastName = localStorage.getItem("lastName");
 
-  // ✅ يجيب المستخدم الحالي
+  const [userEmail, setUserEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserEmail(user.email);
-      } else {
-        navigate("/"); // لو مش عامل login يرجع login
+    const db = getFirestore();
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        navigate("/"); // لو مش عامل login
+        return;
+      }
+
+      // email من auth
+      setUserEmail(user.email);
+
+      try {
+        // قراءة بيانات المستخدم من database
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setFirstName(data.firstName);
+          setLastName(data.lastName);
+        }
+      } catch (error) {
+        console.log("Error loading profile:", error);
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  // ✅ logout
+  // ✅ Logout
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
@@ -50,7 +69,10 @@ const lastName = localStorage.getItem("lastName");
       <main className="main-content">
         <header className="topbar">
           <h3>Faculty of Science - Cairo University</h3>
-          <div className="user-info">👤 {firstName}{" "}{lastName}</div>
+
+          <div className="user-info">
+            👤 {firstName ? `${firstName} ${lastName}` : userEmail}
+          </div>
         </header>
 
         <hr />
