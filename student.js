@@ -23,6 +23,16 @@ function Student() {
           <label>Email</label>
           <input type="email" placeholder="Email" />
         </div>
+        
+         <div className="input-box">
+          <label>University Email</label>
+          <input type="email" placeholder="Email" />
+        </div>
+
+        <div className="input-box">
+          <label>National ID</label>
+          <input type="text" placeholder="ID" />
+        </div>
 
         <div className="input-box">
           <label>Password</label>
