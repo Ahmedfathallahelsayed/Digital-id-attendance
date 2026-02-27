@@ -18,7 +18,7 @@ export default function Login() {
 
     try {
       await loginUser(email, password);
-      navigate("/");
+navigate("/dashboard");
     } catch (err) {
       console.log(err.code);
 
