@@ -116,3 +116,25 @@ button:hover {
   border: 2px solid #2f80ed;
   color: #2f80ed;
 }
+
+/* SUCCESS MESSAGE */
+.success-box {
+  background: #e6ffed;
+  color: #067d3c;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #b7f5c8;
+  font-size: 14px;
+}
+
+/* ERROR MESSAGE */
+.error-box {
+  background: #ffe6e6;
+  color: #cc0000;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ffb3b3;
+  font-size: 14px;
+}
