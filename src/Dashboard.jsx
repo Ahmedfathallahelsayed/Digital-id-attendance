@@ -11,6 +11,7 @@ function Dashboard() {
   const [userEmail, setUserEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const db = getFirestore();
@@ -25,7 +26,7 @@ function Dashboard() {
       setUserEmail(user.email);
 
       try {
-        // قراءة بيانات المستخدم من database
+        // قراءة بيانات المستخدم من Firestore
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
@@ -33,6 +34,7 @@ function Dashboard() {
           const data = docSnap.data();
           setFirstName(data.firstName);
           setLastName(data.lastName);
+          setRole(data.role); // ✅ قراءة role
         }
       } catch (error) {
         console.log("Error loading profile:", error);
@@ -71,7 +73,9 @@ function Dashboard() {
           <h3>Faculty of Science - Cairo University</h3>
 
           <div className="user-info">
-            👤 {firstName ? `${firstName} ${lastName}` : userEmail}
+            <div>👤 {firstName ? `${firstName} ${lastName}` : userEmail}</div>
+
+            {role && <div className="user-role">{role}</div>}
           </div>
         </header>
 
