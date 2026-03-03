@@ -3,18 +3,22 @@ import "./DigitalCard.css";
 
 export default function DigitalCard({ student }) {
   return (
-    <div className="card">
-      <img
-        src={student.photo || "https://i.pravatar.cc/60?img=5"}
-        alt={student.name}
-        className="student-photo"
-      />
+   <div className="card">
 
-      <h3 className="student-name">{student.name}</h3>
-      <p className="student-major">{student.major}</p>
-      <p className="student-id">ID: {student.id}</p>
+  <div className="university">
+    Faculty of Science<br/>
+    Cairo University
+  </div>
 
-      <div className="qr-placeholder"></div>
-    </div>
+  <p className="student-name">{student.name}</p>
+
+  <p className="student-major">{student.major}</p>
+
+  <p className="student-id">ID: {student.id}</p>
+
+  <div className="qr-placeholder"></div>
+
+</div>
   );
+  
 }

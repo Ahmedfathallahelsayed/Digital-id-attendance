@@ -27,15 +27,7 @@ export default function Classes() {
 
         <h2>Instructor Panel</h2>
 
-        <div className="user-box">
-          <div className="user-name">
-            {firstName} {lastName}
-          </div>
-
-          <div className="user-role">
-            Instructor
-          </div>
-        </div>
+       
 
       </div>
 
@@ -74,13 +66,7 @@ export default function Classes() {
 
       </div>
 
-      {/* BACK BUTTON */}
-      <button
-        className="back-btn"
-        onClick={() => navigate("/dashboard")}
-      >
-        Back to Dashboard
-      </button>
+      
 
     </div>
   );
