@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "./auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -18,23 +19,22 @@ function Dashboard() {
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        navigate("/"); // لو مش عامل login
+        navigate("/");
         return;
       }
 
-      // email من auth
       setUserEmail(user.email);
 
       try {
-        // قراءة بيانات المستخدم من Firestore
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const data = docSnap.data();
+
           setFirstName(data.firstName);
           setLastName(data.lastName);
-          setRole(data.role); // ✅ قراءة role
+          setRole(data.role);
         }
       } catch (error) {
         console.log("Error loading profile:", error);
@@ -44,7 +44,6 @@ function Dashboard() {
     return () => unsubscribe();
   }, [navigate]);
 
-  // ✅ Logout
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/");
@@ -58,8 +57,30 @@ function Dashboard() {
 
         <nav className="sidebar-menu">
           <p className="menu-item active">Dashboard</p>
+
           <p className="menu-item">Attendance</p>
-          <p className="menu-item">Digital ID</p>
+
+          {/* لو Instructor يظهر Classes */}
+          {role === "instructor" && (
+            <p
+              className="menu-item"
+              onClick={() => navigate("/classes")}
+              style={{ cursor: "pointer" }}
+            >
+              Classes
+            </p>
+          )}
+
+          {/* لو Student يظهر Digital ID */}
+          {role === "student" && (
+            <p
+              className="menu-item"
+              onClick={() => navigate("/digital-id")}
+              style={{ cursor: "pointer" }}
+            >
+              Digital ID
+            </p>
+          )}
         </nav>
 
         <button className="logout-btn" onClick={handleLogout}>
@@ -74,7 +95,6 @@ function Dashboard() {
 
           <div className="user-info">
             <div>👤 {firstName ? `${firstName} ${lastName}` : userEmail}</div>
-
             {role && <div className="user-role">{role}</div>}
           </div>
         </header>
