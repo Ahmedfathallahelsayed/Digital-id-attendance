@@ -24,11 +24,7 @@ export default function Classes() {
 
       {/* HEADER */}
       <div className="classes-header">
-
         <h2>Instructor Panel</h2>
-
-       
-
       </div>
 
       {/* CREATE CLASS */}
@@ -50,23 +46,26 @@ export default function Classes() {
       {/* CLASSES */}
       <div className="classes-list">
 
-        {classes.map((c, index) => (
-          <div key={index} className="class-card">
+     {classes.map((c, index) => (
+  <div
+    key={index}
+    className="class-card"
+    onClick={() => navigate(`/manage-class/${index}`)}
+    style={{ cursor: "pointer" }}
+  >
 
-            <div className="class-name">
-              {c}
-            </div>
+    <div className="class-name">
+      {c}
+    </div>
 
-            <div className="class-info">
-              Manage Attendance
-            </div>
+    <div className="class-info">
+      Manage Attendance
+    </div>
 
-          </div>
-        ))}
+  </div>
+))}
 
       </div>
-
-      
 
     </div>
   );

@@ -6,6 +6,7 @@ import Register from "./register.jsx";
 
 import Dashboard from "./Dashboard";
 import Classes from "./Classes";
+import ManageClass from "./ManageClass";
 
 import CardStatus from "./CardStatus";
 import DigitalCard from "./digitalCard";
@@ -38,14 +39,16 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* الصفحات اللي فيها Sidebar ثابت */}
+        {/* صفحات فيها Sidebar ثابت */}
         <Route element={<Layout />}>
 
           <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* صفحة الكلاسات للـ Instructor */}
+          {/* صفحة الكلاسات */}
           <Route path="/classes" element={<Classes />} />
 
+          {/* صفحة إدارة الكلاس */}
+<Route path="/manage-class/:id" element={<ManageClass />} />
           <Route
             path="/digital-card"
             element={
@@ -64,7 +67,7 @@ function App() {
             }
           />
 
-          {/* صفحة الـ Digital ID للطالب */}
+          {/* صفحة الـ Digital ID */}
           <Route path="/digital-id" element={<DigitalPage />} />
 
         </Route>
