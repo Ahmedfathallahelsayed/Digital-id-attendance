@@ -1,24 +1,30 @@
 import React from "react";
+import { QRCodeCanvas } from "qrcode.react";
 import "./DigitalCard.css";
 
 export default function DigitalCard({ student }) {
   return (
-   <div className="card">
+    <div className="card">
+      <div className="university">
+        Faculty of Science
+        <br />
+        Cairo University
+      </div>
 
-  <div className="university">
-    Faculty of Science<br/>
-    Cairo University
-  </div>
+      <p className="student-name">{student.name || "Student Name"}</p>
 
-  <p className="student-name">{student.name}</p>
+      <p className="student-role">{student.role || "Student"}</p>
 
-  <p className="student-major">{student.major}</p>
+      <p className="student-id">ID: {student.id || "Loading..."}</p>
 
-  <p className="student-id">ID: {student.id}</p>
-
-  <div className="qr-placeholder"></div>
-
-</div>
+      <div className="qr-placeholder">
+        <QRCodeCanvas
+          value={student.id}
+          size={70}
+          bgColor="#ffffff"
+          fgColor="#000000"
+        />
+      </div>
+    </div>
   );
-  
 }
