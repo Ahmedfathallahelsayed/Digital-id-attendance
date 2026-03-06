@@ -1,6 +1,7 @@
 .card {
-  width: 330px;
-  background: linear-gradient(135deg, #003366, #0056b3);
+width: 380px;
+  height: 220px;
+    background: linear-gradient(135deg, #003366, #0056b3);
   color: white;
   padding: 22px;
   border-radius: 18px;
@@ -20,32 +21,36 @@
 
 /* اسم الطالب */
 .student-name {
-  font-size: 20px;
-  font-weight: 700;
-  margin-top: 10px;
+  font-size: 30px;
+  font-weight: 600;
+  margin-top: 15px;
 }
 
 /* التخصص */
 .student-role {
-  font-size: 14px;
+  font-size: 18px;
   margin-top: 4px;
   opacity: 0.9;
 }
 
 /* رقم الطالب */
 .student-id {
-  font-size: 14px;
-  margin-top: 10px;
-  font-weight: 500;
+  font-size: 19px;
+  margin-top: 20px;
+  font-weight: 700;
 }
 
 /* QR */
 .qr-placeholder {
-  width: 75px;
-  height: 75px;
+  width: 85px;
+  height: 85px;
   background: white;
-  border-radius: 8px;
+  border-radius: 10px;
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  bottom: 18px;
+  right: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -28,7 +28,7 @@ export default function ManageClass() {
 
       <button
         className="back-btn"
-        onClick={() => navigate("/attendance")}
+  onClick={() => navigate("/classes")}
       >
         Back to Classes
       </button>

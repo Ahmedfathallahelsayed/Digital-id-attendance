@@ -44,13 +44,14 @@ export default function DigitalIdPage() {
     return <h3>Loading...</h3>;
   }
 
-  return (
-    <div className="digital-id-page">
-      <h2>Digital ID</h2>
-
+return (
+  <div className="digital-id-page">
+    <h1>Digital ID</h1>
+<h3>Your official university identification</h3>
+    <div className="id-container">
       <DigitalCard student={student} />
-
       <CardStatus student={student} />
     </div>
-  );
+  </div>
+);
 }

@@ -1,13 +1,18 @@
 .digital-id-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 2.5rem;
-  font-family: Arial, sans-serif;
+  padding: 40px 60px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
 }
 
+/* العنوان */
 .digital-id-page h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 35px;
+}
+
+/* الكونتينر اللي فيه الكروت */
+.id-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 80px; /* المسافة بين الكاردين */
 }

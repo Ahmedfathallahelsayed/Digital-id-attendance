@@ -20,7 +20,7 @@ export default function DigitalCard({ student }) {
       <div className="qr-placeholder">
         <QRCodeCanvas
           value={student.id}
-          size={65}
+          size={70}
           bgColor="#ffffff"
           fgColor="#000000"
         />
