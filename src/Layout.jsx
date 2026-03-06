@@ -3,6 +3,12 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { auth } from "./auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import {
+  FaTachometerAlt,
+  FaUserCheck,
+  FaIdCard,
+  FaSignOutAlt,
+} from "react-icons/fa";
 
 import "./Dashboard.css";
 
@@ -50,21 +56,18 @@ export default function Layout() {
 
   return (
     <div className="dashboard-container">
-
       {/* Sidebar */}
       <aside className="sidebar">
         <h3 className="sidebar-title">Menu</h3>
 
         <nav className="sidebar-menu">
-
-          <p
-            className="menu-item"
-            onClick={() => navigate("/dashboard")}
-          >
-            Dashboard
+          <p className="menu-item" onClick={() => navigate("/dashboard")}>
+            <FaTachometerAlt /> Dashboard
           </p>
 
-          <p className="menu-item">Attendance</p>
+          <p className="menu-item">
+            <FaUserCheck /> Attendance
+          </p>
 
           {role === "instructor" && (
             <p
@@ -72,7 +75,7 @@ export default function Layout() {
               onClick={() => navigate("/classes")}
               style={{ cursor: "pointer" }}
             >
-              Classes
+              <FaChalkboardTeacher /> Classes
             </p>
           )}
 
@@ -82,20 +85,19 @@ export default function Layout() {
               onClick={() => navigate("/digital-id")}
               style={{ cursor: "pointer" }}
             >
-              Digital ID
+              <FaIdCard /> Digital ID
             </p>
           )}
-
         </nav>
 
         <button className="logout-btn" onClick={handleLogout}>
+          <FaSignOutAlt style={{ marginRight: "6px" }} />
           Logout
         </button>
       </aside>
 
       {/* Main */}
       <main className="main-content">
-
         <header className="topbar">
           <h3>Faculty of Science - Cairo University</h3>
 
@@ -109,7 +111,6 @@ export default function Layout() {
 
         {/* الصفحات هتفتح هنا */}
         <Outlet />
-
       </main>
     </div>
   );

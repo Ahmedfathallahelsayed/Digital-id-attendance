@@ -15,6 +15,11 @@
   flex-direction: column;
   /* justify-content: space-between; */
 }
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .sidebar-title {
   margin-bottom: 25px;
@@ -50,7 +55,7 @@
   color: white;
   padding: 10px;
   border-radius: 20px;
-  
+
   cursor: pointer;
 }
 
