@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Classes.css";
 
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";import { db } from "./firebase";
+import { auth } from "./firebase";
 export default function Classes() {
 
   const navigate = useNavigate();
@@ -12,12 +14,61 @@ export default function Classes() {
   const firstName = localStorage.getItem("firstName");
   const lastName = localStorage.getItem("lastName");
 
-  const handleCreateClass = () => {
-    if (newClass.trim() === "") return;
+  // تحميل الكلاسات من Firebase
+ useEffect(() => {
 
-    setClasses([...classes, newClass]);
-    setNewClass("");
+  const fetchClasses = async () => {
+
+    const user = auth.currentUser;
+
+    const q = query(
+      collection(db, "classes"),
+      where("instructorId", "==", user.uid)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const classesData = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    setClasses(classesData);
+
   };
+
+  fetchClasses();
+
+}, []);
+  // إنشاء كلاس جديد
+ const handleCreateClass = async () => {
+
+  if (newClass.trim() === "") return;
+
+  const user = auth.currentUser;
+
+  try {
+
+    const docRef = await addDoc(collection(db, "classes"), {
+      name: newClass,
+      instructorId: user.uid
+    });
+
+    setClasses([
+      ...classes,
+      {
+        id: docRef.id,
+        name: newClass
+      }
+    ]);
+
+    setNewClass("");
+
+  } catch (error) {
+    console.error(error);
+  }
+
+};
 
   return (
     <div className="classes-container">
@@ -46,24 +97,24 @@ export default function Classes() {
       {/* CLASSES */}
       <div className="classes-list">
 
-     {classes.map((c, index) => (
-  <div
-    key={index}
-    className="class-card"
-    onClick={() => navigate(`/manage-class/${index}`)}
-    style={{ cursor: "pointer" }}
-  >
+        {classes.map((c) => (
+          <div
+            key={c.id}
+            className="class-card"
+            onClick={() => navigate(`/manage-class/${c.id}`)}
+            style={{ cursor: "pointer" }}
+          >
 
-    <div className="class-name">
-      {c}
-    </div>
+            <div className="class-name">
+              {c.name}
+            </div>
 
-    <div className="class-info">
-      Manage Attendance
-    </div>
+            <div className="class-info">
+              Manage Attendance
+            </div>
 
-  </div>
-))}
+          </div>
+        ))}
 
       </div>
 
