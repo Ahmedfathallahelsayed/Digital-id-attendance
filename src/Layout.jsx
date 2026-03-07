@@ -6,6 +6,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 import {
   FaTachometerAlt,
   FaUserCheck,
+  FaChalkboardTeacher,
   FaIdCard,
   FaSignOutAlt,
 } from "react-icons/fa";
