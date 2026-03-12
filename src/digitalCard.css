@@ -1,0 +1,56 @@
+.card {
+width: 380px;
+  height: 220px;
+    background: linear-gradient(135deg, #003366, #0056b3);
+  color: white;
+  padding: 22px;
+  border-radius: 18px;
+  margin-bottom: 20px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* عنوان الكلية */
+.university {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* اسم الطالب */
+.student-name {
+  font-size: 30px;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+/* التخصص */
+.student-role {
+  font-size: 18px;
+  margin-top: 4px;
+  opacity: 0.9;
+}
+
+/* رقم الطالب */
+.student-id {
+  font-size: 19px;
+  margin-top: 20px;
+  font-weight: 700;
+}
+
+/* QR */
+.qr-placeholder {
+  width: 85px;
+  height: 85px;
+  background: white;
+  border-radius: 10px;
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
