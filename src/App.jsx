@@ -1,4 +1,4 @@
-import React from "react"; 
+import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./login.jsx";
@@ -10,7 +10,6 @@ import ManageClass from "./ManageClass.jsx";
 
 import DigitalIdPage from "./digitalPage.jsx";
 
-import QRPage from "./QRPage.jsx";
 import Settings from "./Settings.jsx";
 import Security from "./Security.jsx";
 import Layout from "./Layout.jsx";
@@ -21,30 +20,24 @@ function App() {
   return (
     <Router>
       <Routes>
-
         {/* pages without layout */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* pages with sidebar */}
         <Route element={<Layout />}>
-
           <Route path="/dashboard" element={<Dashboard />} />
 
           <Route path="/classes" element={<Classes />} />
 
-          <Route path="/manage-class/:id" element={<ManageClass />} />
+          <Route path="/manage-class/:classId" element={<ManageClass />} />
 
           <Route path="/digital-id" element={<DigitalIdPage />} />
-
-          <Route path="/qr" element={<QRPage />} />
 
           <Route path="/settings" element={<Settings />} />
 
           <Route path="/security" element={<Security />} />
-
         </Route>
-
       </Routes>
     </Router>
   );

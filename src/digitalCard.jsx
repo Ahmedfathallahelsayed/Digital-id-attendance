@@ -1,6 +1,6 @@
 import React from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import "./DigitalCard.css";
+import "./digitalCard.css";
 
 export default function DigitalCard({ student }) {
   return (
@@ -19,7 +19,7 @@ export default function DigitalCard({ student }) {
 
       <div className="qr-placeholder">
         <QRCodeCanvas
-          value={student.id}
+          value={student.id || "no-id"}
           size={70}
           bgColor="#ffffff"
           fgColor="#000000"
