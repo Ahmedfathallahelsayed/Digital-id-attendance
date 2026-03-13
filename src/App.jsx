@@ -11,52 +11,56 @@ import Students from "./Students";
 import QRPage from "./QRPage";
 import Settings from "./Settings";
 import Security from "./Security";
+
 import "./App.css";
 
 function App() {
-     const student = {
+
+  const student = {
     name: "name",
     major: "Computer Science",
     id: "2327",
-    photo:"" };
+    photo: ""
+  };
 
-     const studen = { 
+  const studen = {
     id: "12345",
     lastScan: "2026-03-02 10:30 AM"
   };
- return (
-  <Router>
-    <div>
-      <h1>Attendance System</h1>
 
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/classes" element={<Classes />} />
+  return (
+    <Router>
+      <div>
+        <h1>Attendance System</h1>
 
-        <Route path="/digital-card" element={
-          <div style={{ padding: "2rem" }}>
-            <DigitalCard student={student} />
-          </div>
-        } />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/classes" element={<Classes />} />
 
-        <Route path="/card-status" element={
-          <div style={{ padding: "2rem" }}>
-            <CardStatus student={studen} />
-          </div>
-        } />
+          <Route path="/digital-card" element={
+            <div style={{ padding: "2rem" }}>
+              <DigitalCard student={student} />
+            </div>
+          } />
 
-        <Route path="/digital-id" element={<DigitalIdPage />} />
-        <Route path="/students" element={<Students />} />
-        <Route path="/qr" element={<QRPage />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/security" element={<Security />} />
-      </Routes>
+          <Route path="/card-status" element={
+            <div style={{ padding: "2rem" }}>
+              <CardStatus student={studen} />
+            </div>
+          } />
 
-    </div>
-  </Router>
-);
+          <Route path="/digital-id" element={<DigitalIdPage />} />
+          <Route path="/students" element={<Students />} />
+          <Route path="/qr" element={<QRPage />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/security" element={<Security />} />
+        </Routes>
+
+      </div>
+    </Router>
+  );
 }
 
 export default App;
