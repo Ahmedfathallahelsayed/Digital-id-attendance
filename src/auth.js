@@ -1,31 +1,34 @@
-import { initializeApp } from "firebase/app";
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithRedirect,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
-import { getFirestore, doc, setDoc, runTransaction } from "firebase/firestore";
+import { doc, setDoc, runTransaction } from "firebase/firestore";
 
-// ================= CONFIG =================
-const firebaseConfig = {
-  apiKey: "AIzaSyC0vmB4UpXMGTj__T7lGUdQIBGfcH_2bJY",
-  authDomain: "accessu-e7bd4.firebaseapp.com",
-  projectId: "accessu-e7bd4",
-  storageBucket: "accessu-e7bd4.firebasestorage.app",
-  messagingSenderId: "336518154309",
-  appId: "1:336518154309:web:56dea3ac0324a44f8bbb2c",
-};
-
-// ================= INIT =================
-const app = initializeApp(firebaseConfig);
-
-export const auth = getAuth(app);
-const db = getFirestore(app);
+import { auth, db, googleProvider, facebookProvider } from "./firebase";
 
 // ================= LOGIN =================
+
+// LOGIN EMAIL
 export const loginUser = (email, password) => {
   return signInWithEmailAndPassword(auth, email, password);
+};
+
+// LOGIN GOOGLE
+export const loginWithGoogle = () => {
+  return signInWithRedirect(auth, googleProvider);
+};
+
+// LOGIN FACEBOOK
+export const loginWithFacebook = () => {
+  return signInWithRedirect(auth, facebookProvider);
+};
+
+// RESET PASSWORD
+export const resetPassword = (email) => {
+  return sendPasswordResetEmail(auth, email);
 };
 
 // ================= GENERATE STUDENT ID =================
@@ -40,12 +43,9 @@ const generateStudentId = async () => {
     }
 
     const currentId = counterDoc.data().currentId;
-
     const nextId = currentId + 1;
 
-    transaction.update(counterRef, {
-      currentId: nextId,
-    });
+    transaction.update(counterRef, { currentId: nextId });
 
     return nextId;
   });
@@ -57,17 +57,13 @@ const generateStudentId = async () => {
 export const registerUser = async (userData) => {
   const { email, password, firstName, lastName, role, nationalId } = userData;
 
-  // إنشاء حساب في Firebase Auth
   const cred = await createUserWithEmailAndPassword(auth, email, password);
 
   let studentId = null;
-
-  // لو Student يولد ID متسلسل
   if (role === "student") {
     studentId = await generateStudentId();
   }
 
-  // تخزين البيانات في Firestore
   await setDoc(doc(db, "users", cred.user.uid), {
     uid: cred.user.uid,
     email,
@@ -79,3 +75,5 @@ export const registerUser = async (userData) => {
     createdAt: new Date(),
   });
 };
+
+export { auth };
