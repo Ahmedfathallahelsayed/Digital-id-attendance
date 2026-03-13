@@ -9,6 +9,7 @@ import {
   FaChalkboardTeacher,
   FaIdCard,
   FaSignOutAlt,
+  FaCog
 } from "react-icons/fa";
 
 import "./Dashboard.css";
@@ -57,12 +58,18 @@ export default function Layout() {
 
   return (
     <div className="dashboard-container">
+
       {/* Sidebar */}
       <aside className="sidebar">
         <h3 className="sidebar-title">Menu</h3>
 
         <nav className="sidebar-menu">
-          <p className="menu-item" onClick={() => navigate("/dashboard")}>
+
+          <p
+            className="menu-item"
+            onClick={() => navigate("/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
             <FaTachometerAlt /> Dashboard
           </p>
 
@@ -89,6 +96,16 @@ export default function Layout() {
               <FaIdCard /> Digital ID
             </p>
           )}
+
+          {/* Settings */}
+          <p
+            className="menu-item"
+            onClick={() => navigate("/settings")}
+            style={{ cursor: "pointer" }}
+          >
+            <FaCog /> Settings
+          </p>
+
         </nav>
 
         <button className="logout-btn" onClick={handleLogout}>
@@ -99,6 +116,7 @@ export default function Layout() {
 
       {/* Main */}
       <main className="main-content">
+
         <header className="topbar">
           <h3>Faculty of Science - Cairo University</h3>
 
@@ -112,6 +130,7 @@ export default function Layout() {
 
         {/* الصفحات هتفتح هنا */}
         <Outlet />
+
       </main>
     </div>
   );

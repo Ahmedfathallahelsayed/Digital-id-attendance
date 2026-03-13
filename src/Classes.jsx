@@ -1,123 +1,79 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { db, auth } from "./firebase";
 import "./Classes.css";
 
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";import { db } from "./firebase";
-import { auth } from "./firebase";
 export default function Classes() {
-
   const navigate = useNavigate();
-
   const [classes, setClasses] = useState([]);
   const [newClass, setNewClass] = useState("");
 
-  const firstName = localStorage.getItem("firstName");
-  const lastName = localStorage.getItem("lastName");
+  // تحميل الكلاسات للانستراكتور الحالي
+  useEffect(() => {
+    const fetchClasses = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
 
-  // تحميل الكلاسات من Firebase
- useEffect(() => {
+      const q = query(collection(db, "classes"), where("instructorId", "==", user.uid));
+      const snapshot = await getDocs(q);
+      const classesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setClasses(classesData);
+    };
+    fetchClasses();
+  }, []);
 
-  const fetchClasses = async () => {
+  // إنشاء كلاس جديد
+  const handleCreateClass = async () => {
+    if (newClass.trim() === "") return;
 
     const user = auth.currentUser;
-
-    const q = query(
-      collection(db, "classes"),
-      where("instructorId", "==", user.uid)
-    );
-
-    const querySnapshot = await getDocs(q);
-
-    const classesData = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    setClasses(classesData);
-
-  };
-
-  fetchClasses();
-
-}, []);
-  // إنشاء كلاس جديد
- const handleCreateClass = async () => {
-
-  if (newClass.trim() === "") return;
-
-  const user = auth.currentUser;
-
-  try {
+    if (!user) return;
 
     const docRef = await addDoc(collection(db, "classes"), {
       name: newClass,
       instructorId: user.uid
     });
 
-    setClasses([
-      ...classes,
-      {
-        id: docRef.id,
-        name: newClass
-      }
-    ]);
-
+    setClasses([...classes, { id: docRef.id, name: newClass }]);
     setNewClass("");
-
-  } catch (error) {
-    console.error(error);
-  }
-
-};
+  };
 
   return (
     <div className="classes-container">
-
-      {/* HEADER */}
-      <div className="classes-header">
-        <h2>Instructor Panel</h2>
-      </div>
+      <h2>Instructor Panel</h2>
 
       {/* CREATE CLASS */}
       <div className="create-class-box">
-
         <input
           type="text"
-          placeholder="Enter class name (ex: Math)"
+          placeholder="Enter Course Name"
           value={newClass}
           onChange={(e) => setNewClass(e.target.value)}
         />
-
-        <button onClick={handleCreateClass}>
+        <button className="create-btn" onClick={handleCreateClass}>
           Create Class
         </button>
-
       </div>
 
-      {/* CLASSES */}
+      {/* قائمة الكلاسات */}
       <div className="classes-list">
-
-        {classes.map((c) => (
+        {classes.map(c => (
           <div
             key={c.id}
             className="class-card"
-            onClick={() => navigate(`/manage-class/${c.id}`)}
             style={{ cursor: "pointer" }}
           >
-
-            <div className="class-name">
-              {c.name}
-            </div>
-
-            <div className="class-info">
+            <div className="class-name">{c.name}</div>
+            <div
+              className="class-info"
+              onClick={() => navigate(`/manage-class/${c.id}`)}
+            >
               Manage Attendance
             </div>
-
           </div>
         ))}
-
       </div>
-
     </div>
   );
 }
