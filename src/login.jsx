@@ -147,9 +147,7 @@ export default function Login() {
           Login with Google
         </button>
 
-        <button type="button" onClick={loginWithFacebook}>
-          Login with Facebook
-        </button>
+       
 
         <p className="bottom-text">
           Don’t have an account?
