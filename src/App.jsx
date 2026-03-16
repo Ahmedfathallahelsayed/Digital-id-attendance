@@ -17,6 +17,7 @@ import Instructors from "./Instructors";
 import InstructorClasses from "./InstructorClasses";
 import "./App.css";
 import Attendance from "./Attendance.jsx";
+import ClassAttendance from "./ClassAttendance";
 function App() {
   return (
     <Router>
@@ -37,8 +38,9 @@ function App() {
 <Route path="/attendance" element={<Attendance />} />
           <Route path="/settings" element={<Settings />} />
 <Route path="/instructors" element={<Instructors />} />
-<Route path="/instructor/:id" element={<InstructorClasses />} />
+<Route path="/admin/instructor/:id" element={<InstructorClasses />} />
           <Route path="/security" element={<Security />} />
+          <Route path="/admin/class/:id" element={<ClassAttendance />} />
         </Route>
       </Routes>
     </Router>
