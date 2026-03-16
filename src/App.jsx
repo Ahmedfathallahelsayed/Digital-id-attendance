@@ -13,9 +13,10 @@ import DigitalIdPage from "./digitalPage.jsx";
 import Settings from "./Settings.jsx";
 import Security from "./Security.jsx";
 import Layout from "./Layout.jsx";
-
+import Instructors from "./Instructors";
+import InstructorClasses from "./InstructorClasses";
 import "./App.css";
-
+import Attendance from "./Attendance.jsx";
 function App() {
   return (
     <Router>
@@ -33,9 +34,10 @@ function App() {
           <Route path="/manage-class/:classId" element={<ManageClass />} />
 
           <Route path="/digital-id" element={<DigitalIdPage />} />
-
+<Route path="/attendance" element={<Attendance />} />
           <Route path="/settings" element={<Settings />} />
-
+<Route path="/instructors" element={<Instructors />} />
+<Route path="/instructor/:id" element={<InstructorClasses />} />
           <Route path="/security" element={<Security />} />
         </Route>
       </Routes>
