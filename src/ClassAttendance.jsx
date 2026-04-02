@@ -1,71 +1,205 @@
-import React,{useEffect,useState} from "react";
-import { useParams } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { db } from "./firebase";
+import "./Attendance.css";
 
-export default function ClassAttendance(){
+const formatDate = (dateObj) =>
+  dateObj.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 
-const {id}=useParams();
+const formatTime = (dateObj) =>
+  dateObj.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
-const [students,setStudents]=useState([]);
+export default function ClassAttendance() {
+  const { classId, sessionId } = useParams();
+  const navigate = useNavigate();
 
-useEffect(()=>{
+  const [className, setClassName] = useState("");
+  const [sessions, setSessions] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const fetchAttendance=async()=>{
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
 
-const q=query(
-collection(db,"attendance"),
-where("classId","==",id)
-);
+      try {
+        const classSnap = await getDoc(doc(db, "classes", classId));
+        if (classSnap.exists()) {
+          setClassName(classSnap.data().name || "Class");
+        }
 
-const snapshot=await getDocs(q);
+        if (!sessionId) {
+          const q = query(
+            collection(db, "sessions"),
+            where("classId", "==", classId)
+          );
 
-const data=snapshot.docs.map(doc=>doc.data());
+          const snapshot = await getDocs(q);
 
-setStudents(data);
+          const sessionsData = snapshot.docs
+            .map((doc) => {
+              const data = doc.data();
+              const createdAtDate = data.createdAt?.toDate
+                ? data.createdAt.toDate()
+                : new Date(data.createdAt);
 
-};
+              return {
+                id: doc.id,
+                ...data,
+                createdAtDate,
+              };
+            })
+            .sort((a, b) => b.createdAtDate - a.createdAtDate);
 
-fetchAttendance();
+          setSessions(sessionsData);
+        } else {
+          const q = query(
+            collection(db, "attendance"),
+            where("sessionId", "==", sessionId)
+          );
 
-},[id]);
+          const snapshot = await getDocs(q);
 
-return(
+          const studentsData = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
 
-<div style={{padding:"30px"}}>
+          setStudents(studentsData);
+        }
+      } catch (error) {
+        console.log("ClassAttendance error:", error);
+      }
 
-<h2>Students Attendance</h2>
+      setLoading(false);
+    };
 
-<table style={{width:"100%",marginTop:"20px"}}>
+    loadData();
+  }, [classId, sessionId]);
 
-<thead>
+  if (loading) {
+    return (
+      <div className="attendance-page">
+        <div className="attendance-empty">Loading...</div>
+      </div>
+    );
+  }
 
-<tr>
-<th>Student Name</th>
-<th>Status</th>
-<th>Date</th>
-</tr>
+  return (
+    <div className="attendance-page">
+      <button
+        className="attendance-back-btn"
+        onClick={() =>
+          navigate(
+            sessionId ? `/attendance/class/${classId}` : "/attendance"
+          )
+        }
+      >
+        ← Back
+      </button>
 
-</thead>
+      <div className="attendance-header">
+        <div>
+          <h2>{className}</h2>
+          <p className="attendance-subtitle">
+            {!sessionId
+              ? "Choose a lecture session to see the attended students."
+              : "Students who attended this lecture."}
+          </p>
+        </div>
+      </div>
 
-<tbody>
+      {!sessionId ? (
+        sessions.length === 0 ? (
+          <div className="attendance-empty">
+            No lecture sessions found for this class yet.
+          </div>
+        ) : (
+          <div className="attendance-grid">
+            {sessions.map((s, index) => {
+              const started = s.createdAtDate;
+              const ended = new Date(
+                started.getTime() + 2 * 60 * 60 * 1000
+              );
 
-{students.map((s,index)=>(
+              return (
+                <div
+                  key={s.id}
+                  className="attendance-card"
+                  onClick={() =>
+                    navigate(`/attendance/class/${classId}/session/${s.id}`)
+                  }
+                >
+                  <div className="attendance-card-number">
+                    {String(index + 1).padStart(2, "0")}
+                  </div>
 
-<tr key={index}>
-<td>{s.studentName}</td>
-<td>{s.status}</td>
-<td>{s.date}</td>
-</tr>
+                  <div className="attendance-card-name">
+                    {formatDate(started)}
+                  </div>
 
-))}
+                  <div className="session-meta">
+                    <span>{formatTime(started)}</span>
+                    <span>→</span>
+                    <span>{formatTime(ended)}</span>
+                  </div>
 
-</tbody>
+                  <div className="attendance-card-link">
+                    View Students →
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )
+      ) : students.length === 0 ? (
+        <div className="attendance-empty">
+          No students attendance found for this lecture.
+        </div>
+      ) : (
+        <div className="attendance-table-wrap">
+          <table className="attendance-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Student ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-</table>
-
-</div>
-
-);
-
+            <tbody>
+              {students.map((s, index) => (
+                <tr key={s.id || index}>
+                  <td>{index + 1}</td>
+                  <td>{s.studentName || "Unknown"}</td>
+                  <td>{s.studentId || "—"}</td>
+                  <td>
+                    <span className="status-pill">
+                      {s.status || "Present"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
 }

@@ -15,31 +15,38 @@ import Security from "./Security.jsx";
 import Layout from "./Layout.jsx";
 import Instructors from "./Instructors";
 import InstructorClasses from "./InstructorClasses";
-import "./App.css";
 import Attendance from "./Attendance.jsx";
 import ClassAttendance from "./ClassAttendance";
+
+import "./App.css";
+
 function App() {
   return (
     <Router>
       <Routes>
-        {/* pages without layout */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* pages with sidebar */}
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
 
           <Route path="/classes" element={<Classes />} />
-
           <Route path="/manage-class/:classId" element={<ManageClass />} />
 
           <Route path="/digital-id" element={<DigitalIdPage />} />
-<Route path="/attendance" element={<Attendance />} />
+
+          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/attendance/class/:classId" element={<ClassAttendance />} />
+          <Route
+            path="/attendance/class/:classId/session/:sessionId"
+            element={<ClassAttendance />}
+          />
+
           <Route path="/settings" element={<Settings />} />
-<Route path="/instructors" element={<Instructors />} />
-<Route path="/admin/instructor/:id" element={<InstructorClasses />} />
           <Route path="/security" element={<Security />} />
+
+          <Route path="/instructors" element={<Instructors />} />
+          <Route path="/admin/instructor/:id" element={<InstructorClasses />} />
           <Route path="/admin/class/:id" element={<ClassAttendance />} />
         </Route>
       </Routes>
