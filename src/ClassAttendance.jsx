@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   collection,
   query,
@@ -25,8 +25,14 @@ const formatTime = (dateObj) =>
   });
 
 export default function ClassAttendance() {
-  const { classId, sessionId } = useParams();
+  const params = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const classId = params.classId || params.id;
+  const sessionId = params.sessionId;
+
+  const isAdminPath = location.pathname.startsWith("/admin");
 
   const [className, setClassName] = useState("");
   const [sessions, setSessions] = useState([]);
@@ -100,15 +106,16 @@ export default function ClassAttendance() {
     );
   }
 
+  const backToClasses = isAdminPath ? "/instructors" : "/attendance";
+  const backToSessions = isAdminPath
+    ? `/admin/class/${classId}`
+    : `/attendance/class/${classId}`;
+
   return (
     <div className="attendance-page">
       <button
         className="attendance-back-btn"
-        onClick={() =>
-          navigate(
-            sessionId ? `/attendance/class/${classId}` : "/attendance"
-          )
-        }
+        onClick={() => navigate(sessionId ? backToSessions : backToClasses)}
       >
         ← Back
       </button>
@@ -133,17 +140,13 @@ export default function ClassAttendance() {
           <div className="attendance-grid">
             {sessions.map((s, index) => {
               const started = s.createdAtDate;
-              const ended = new Date(
-                started.getTime() + 2 * 60 * 60 * 1000
-              );
+              const ended = new Date(started.getTime() + 2 * 60 * 60 * 1000);
 
               return (
                 <div
                   key={s.id}
                   className="attendance-card"
-                  onClick={() =>
-                    navigate(`/attendance/class/${classId}/session/${s.id}`)
-                  }
+                  onClick={() => navigate(`${backToSessions}/session/${s.id}`)}
                 >
                   <div className="attendance-card-number">
                     {String(index + 1).padStart(2, "0")}
@@ -159,9 +162,7 @@ export default function ClassAttendance() {
                     <span>{formatTime(ended)}</span>
                   </div>
 
-                  <div className="attendance-card-link">
-                    View Students →
-                  </div>
+                  <div className="attendance-card-link">View Students →</div>
                 </div>
               );
             })}

@@ -48,6 +48,10 @@ function App() {
           <Route path="/instructors" element={<Instructors />} />
           <Route path="/admin/instructor/:id" element={<InstructorClasses />} />
           <Route path="/admin/class/:id" element={<ClassAttendance />} />
+          <Route
+            path="/admin/class/:id/session/:sessionId"
+            element={<ClassAttendance />}
+          />
         </Route>
       </Routes>
     </Router>

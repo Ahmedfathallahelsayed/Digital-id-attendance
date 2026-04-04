@@ -30,7 +30,9 @@ export default function Layout() {
         navigate("/");
         return;
       }
+
       setUserEmail(user.email);
+
       try {
         const docSnap = await getDoc(doc(db, "users", user.uid));
         if (docSnap.exists()) {
@@ -43,6 +45,7 @@ export default function Layout() {
         console.log("Error:", err);
       }
     });
+
     return () => unsubscribe();
   }, [navigate]);
 
@@ -62,7 +65,6 @@ export default function Layout() {
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
-        {/* لوجو بس من غير AccessU */}
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">CU</div>
         </div>
@@ -75,14 +77,7 @@ export default function Layout() {
             <FaTachometerAlt /> Dashboard
           </p>
 
-          <p
-            className={`menu-item ${isActive("/attendance") ? "active" : ""}`}
-            onClick={() => navigate("/attendance")}
-          >
-            <FaUserCheck /> Attendance
-          </p>
-
-          {/* Admin - بدون label */}
+          {/* Admin */}
           {role === "admin" && (
             <>
               <p
@@ -91,6 +86,7 @@ export default function Layout() {
               >
                 <FaUsers /> Instructors
               </p>
+
               <p
                 className={`menu-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={() => navigate("/settings")}
@@ -100,15 +96,23 @@ export default function Layout() {
             </>
           )}
 
-          {/* Instructor - بدون label */}
+          {/* Instructor */}
           {role === "instructor" && (
             <>
+              <p
+                className={`menu-item ${isActive("/attendance") ? "active" : ""}`}
+                onClick={() => navigate("/attendance")}
+              >
+                <FaUserCheck /> Attendance
+              </p>
+
               <p
                 className={`menu-item ${isActive("/classes") ? "active" : ""}`}
                 onClick={() => navigate("/classes")}
               >
                 <FaChalkboardTeacher /> Classes
               </p>
+
               <p
                 className={`menu-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={() => navigate("/settings")}
@@ -118,15 +122,23 @@ export default function Layout() {
             </>
           )}
 
-          {/* Student - بدون label */}
+          {/* Student */}
           {role === "student" && (
             <>
+              <p
+                className={`menu-item ${isActive("/attendance") ? "active" : ""}`}
+                onClick={() => navigate("/attendance")}
+              >
+                <FaUserCheck /> Attendance
+              </p>
+
               <p
                 className={`menu-item ${isActive("/digital-id") ? "active" : ""}`}
                 onClick={() => navigate("/digital-id")}
               >
                 <FaIdCard /> Digital ID
               </p>
+
               <p
                 className={`menu-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={() => navigate("/settings")}
@@ -147,7 +159,7 @@ export default function Layout() {
       <main className="main-content">
         <header className="topbar">
           <h3>Faculty of Science — Cairo University</h3>
-          {/* اسم + role + avatar زي الأول */}
+
           <div className="topbar-right">
             <div className="user-info">
               <span className="user-name">{displayName}</span>
