@@ -11,6 +11,7 @@ import {
   FaSignOutAlt,
   FaCog,
   FaUsers,
+  FaBookOpen,
 } from "react-icons/fa";
 import "./Dashboard.css";
 
@@ -130,6 +131,13 @@ export default function Layout() {
                 onClick={() => navigate("/attendance")}
               >
                 <FaUserCheck /> Attendance
+              </p>
+
+              <p
+                className={`menu-item ${isActive("/my-classes") ? "active" : ""}`}
+                onClick={() => navigate("/my-classes")}
+              >
+                <FaBookOpen /> My Classes
               </p>
 
               <p

@@ -7,6 +7,7 @@ import Register from "./register.jsx";
 import Dashboard from "./Dashboard.jsx";
 import Classes from "./Classes.jsx";
 import ManageClass from "./ManageClass.jsx";
+import MyClasses from "./MyClasses.jsx";
 
 import DigitalIdPage from "./digitalPage.jsx";
 
@@ -34,6 +35,7 @@ function App() {
           <Route path="/manage-class/:classId" element={<ManageClass />} />
 
           <Route path="/digital-id" element={<DigitalIdPage />} />
+          <Route path="/my-classes" element={<MyClasses />} />
 
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/attendance/class/:classId" element={<ClassAttendance />} />
@@ -57,5 +59,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;
