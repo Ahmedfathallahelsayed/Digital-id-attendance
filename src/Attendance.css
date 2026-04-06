@@ -159,3 +159,74 @@
   font-size: 12px;
   font-weight: 700;
 }
+
+/* ================= STUDENT SCHEDULE ================= */
+
+.schedule-days {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.schedule-day-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.schedule-day-title {
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.schedule-item:last-child {
+  border-bottom: none;
+}
+
+.schedule-item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.schedule-class-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.schedule-class-code {
+  font-size: 13px;
+  color: #6366f1;
+  font-weight: 600;
+}
+
+.schedule-time {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  white-space: nowrap;
+}
