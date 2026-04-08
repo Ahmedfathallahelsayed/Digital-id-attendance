@@ -171,7 +171,7 @@
   font-weight: 700;
 }
 
-/* لو محتاج user-info في مكان تاني */
+
 .user-info {
   display: flex;
   flex-direction: column;
@@ -251,4 +251,97 @@
   font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.5px;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schedule-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+  margin: 5px 0;
+}
+
+.green {
+  color: green;
+}
+
+/* Chart */
+.chart {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.bars {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  height: 120px;
+}
+
+.bars div {
+  flex: 1;
+  background: #2563eb;
+  border-radius: 6px;
+}
+
+/* Upcoming */
+.upcoming {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.class-item {
+  margin-top: 10px;
+}
+
+/* Quick */
+.quick {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  padding: 20px;
+  border-radius: 15px;
+  color: white;
+}
+
+.quick button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
