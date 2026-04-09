@@ -23,6 +23,7 @@ export default function Layout() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("");
+  const [photoURL, setPhotoURL] = useState(null);
 
   useEffect(() => {
     const db = getFirestore();
@@ -41,6 +42,7 @@ export default function Layout() {
           setFirstName(data.firstName);
           setLastName(data.lastName);
           setRole(data.role);
+          setPhotoURL(data.photoURL || null);
         }
       } catch (err) {
         console.log("Error:", err);
@@ -78,7 +80,6 @@ export default function Layout() {
             <FaTachometerAlt /> Dashboard
           </p>
 
-          {/* Admin */}
           {role === "admin" && (
             <>
               <p
@@ -87,7 +88,6 @@ export default function Layout() {
               >
                 <FaUsers /> Instructors
               </p>
-
               <p
                 className={`menu-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={() => navigate("/settings")}
@@ -97,7 +97,6 @@ export default function Layout() {
             </>
           )}
 
-          {/* Instructor */}
           {role === "instructor" && (
             <>
               <p
@@ -106,14 +105,12 @@ export default function Layout() {
               >
                 <FaUserCheck /> Attendance
               </p>
-
               <p
                 className={`menu-item ${isActive("/classes") ? "active" : ""}`}
                 onClick={() => navigate("/classes")}
               >
                 <FaChalkboardTeacher /> Classes
               </p>
-
               <p
                 className={`menu-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={() => navigate("/settings")}
@@ -123,7 +120,6 @@ export default function Layout() {
             </>
           )}
 
-          {/* Student */}
           {role === "student" && (
             <>
               <p
@@ -132,21 +128,18 @@ export default function Layout() {
               >
                 <FaUserCheck /> Attendance
               </p>
-
               <p
                 className={`menu-item ${isActive("/my-classes") ? "active" : ""}`}
                 onClick={() => navigate("/my-classes")}
               >
                 <FaBookOpen /> My Classes
               </p>
-
               <p
                 className={`menu-item ${isActive("/digital-id") ? "active" : ""}`}
                 onClick={() => navigate("/digital-id")}
               >
                 <FaIdCard /> Digital ID
               </p>
-
               <p
                 className={`menu-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={() => navigate("/settings")}
@@ -173,7 +166,28 @@ export default function Layout() {
               <span className="user-name">{displayName}</span>
               {role && <span className="user-role">{role}</span>}
             </div>
-            <div className="user-avatar">{initials}</div>
+
+            <div
+              className="user-avatar"
+              onClick={() => navigate("/profile")}
+              title="View Profile"
+              style={{ cursor: "pointer", overflow: "hidden" }}
+            >
+              {photoURL ? (
+                <img
+                  src={photoURL}
+                  alt="Profile"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
+                />
+              ) : (
+                initials
+              )}
+            </div>
           </div>
         </header>
 

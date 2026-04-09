@@ -18,6 +18,7 @@ import Instructors from "./Instructors";
 import InstructorClasses from "./InstructorClasses";
 import Attendance from "./Attendance.jsx";
 import ClassAttendance from "./ClassAttendance";
+import Profile from "./Profile.jsx";
 
 import "./App.css";
 
@@ -30,6 +31,7 @@ function App() {
 
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
 
           <Route path="/classes" element={<Classes />} />
           <Route path="/manage-class/:classId" element={<ManageClass />} />
@@ -59,4 +61,5 @@ function App() {
     </Router>
   );
 }
+
 export default App;
