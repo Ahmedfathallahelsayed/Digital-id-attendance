@@ -67,9 +67,11 @@ export default function Layout() {
 
   return (
     <div className="dashboard-container">
+      {/* ===== SIDEBAR ===== */}
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">CU</div>
+          <span>Cairo Uni</span>
         </div>
 
         <nav className="sidebar-menu">
@@ -88,12 +90,6 @@ export default function Layout() {
               >
                 <FaUsers /> Instructors
               </p>
-              <p
-                className={`menu-item ${isActive("/settings") ? "active" : ""}`}
-                onClick={() => navigate("/settings")}
-              >
-                <FaCog /> Settings
-              </p>
             </>
           )}
 
@@ -110,12 +106,6 @@ export default function Layout() {
                 onClick={() => navigate("/classes")}
               >
                 <FaChalkboardTeacher /> Classes
-              </p>
-              <p
-                className={`menu-item ${isActive("/settings") ? "active" : ""}`}
-                onClick={() => navigate("/settings")}
-              >
-                <FaCog /> Settings
               </p>
             </>
           )}
@@ -140,14 +130,16 @@ export default function Layout() {
               >
                 <FaIdCard /> Digital ID
               </p>
-              <p
-                className={`menu-item ${isActive("/settings") ? "active" : ""}`}
-                onClick={() => navigate("/settings")}
-              >
-                <FaCog /> Settings
-              </p>
             </>
           )}
+
+          {/* Settings للجميع */}
+          <p
+            className={`menu-item ${isActive("/settings") ? "active" : ""}`}
+            onClick={() => navigate("/settings")}
+          >
+            <FaCog /> Settings
+          </p>
         </nav>
 
         <div className="sidebar-bottom">
@@ -157,9 +149,10 @@ export default function Layout() {
         </div>
       </aside>
 
+      {/* ===== MAIN ===== */}
       <main className="main-content">
         <header className="topbar">
-          <h3>Faculty of Science — Cairo University</h3>
+          <h3>Faculty of Science</h3>
 
           <div className="topbar-right">
             <div className="user-info">
@@ -170,20 +163,9 @@ export default function Layout() {
             <div
               className="user-avatar"
               onClick={() => navigate("/profile")}
-              title="View Profile"
-              style={{ cursor: "pointer", overflow: "hidden" }}
             >
               {photoURL ? (
-                <img
-                  src={photoURL}
-                  alt="Profile"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "50%",
-                  }}
-                />
+                <img src={photoURL} alt="Profile" />
               ) : (
                 initials
               )}

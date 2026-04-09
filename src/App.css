@@ -1,16 +1,43 @@
-body {
-  background-color: white;
-  font-family: Arial;
+/* ===== THEME VARIABLES ===== */
+
+:root {
+  --bg: #f5f7fb;
+  --text: #111827;
+  --card-bg: #ffffff;
+  --input-bg: #f1f5f9;
+  --border: #e5e7eb;
+  --primary: #3b82f6;
 }
+
+body.dark-mode {
+  --bg: #0f172a;
+  --text: #f9fafb;
+  --card-bg: #1e293b;
+  --input-bg: #334155;
+  --border: #475569;
+  --primary: #3b82f6;
+}
+
+/* ===== GENERAL ===== */
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial;
+  transition: 0.3s;
+}
+
+/* ===== LOGIN / REGISTER ===== */
 
 .container {
   width: 350px;
-  background-color: white;
+  background: var(--card-bg);
   margin: 80px auto;
   padding: 25px;
   border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   text-align: center;
+  transition: 0.3s;
 }
 
 .icon {
@@ -47,44 +74,51 @@ label {
 
 input {
   width: 100%;
-  height: 35px;
+  height: 38px;
   margin-top: 5px;
-  padding-left: 8px;
-  border-radius: 8px;
-  border: 1px solid;
-  background-color: gainsboro;
+  padding-left: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+  transition: 0.2s;
 }
 
 input:focus {
-  border-color: dodgerblue;
-  background-color: white;
+  border-color: var(--primary);
   outline: none;
+  background: var(--card-bg);
 }
+
+/* ===== BUTTON ===== */
 
 button {
   width: 100%;
-  height: 40px;
-  background-color: dodgerblue;
+  height: 42px;
+  background: var(--primary);
   color: white;
   border: none;
   border-radius: 10px;
   margin-top: 10px;
   font-size: 14px;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 button:hover {
-  background-color: dodgerblue;
+  opacity: 0.9;
 }
+
+/* ===== TEXT ===== */
 
 .bottom-text {
   margin-top: 15px;
   font-size: 13px;
-  color: darkgrey;
+  color: gray;
 }
 
 .bottom-text a {
-  color: dodgerblue;
+  color: var(--primary);
   text-decoration: none;
   font-weight: bold;
 }
@@ -92,6 +126,8 @@ button:hover {
 .bottom-text a:hover {
   text-decoration: underline;
 }
+
+/* ===== ROLE SELECTOR ===== */
 
 .role-selector {
   display: flex;
@@ -102,22 +138,22 @@ button:hover {
 
 .role {
   padding: 8px 18px;
-  color: #000;
   border-radius: 25px;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
   cursor: pointer;
   font-weight: 500;
   transition: 0.3s;
 }
 
 .role.active {
-  background-color: #e6f0ff;
-  border: 2px solid #2f80ed;
-  color: #2f80ed;
+  background: #e0ecff;
+  border: 2px solid var(--primary);
+  color: var(--primary);
 }
 
-/* SUCCESS MESSAGE */
+/* ===== MESSAGES ===== */
+
 .success-box {
   background: #e6ffed;
   color: #067d3c;
@@ -128,7 +164,6 @@ button:hover {
   font-size: 14px;
 }
 
-/* ERROR MESSAGE */
 .error-box {
   background: #ffe6e6;
   color: #cc0000;
@@ -137,4 +172,74 @@ button:hover {
   margin-bottom: 15px;
   border: 1px solid #ffb3b3;
   font-size: 14px;
+}
+
+/* ===== SETTINGS PAGE ===== */
+
+.settings-page {
+  max-width: 650px;
+  margin: 40px auto;
+}
+
+.settings-page h2 {
+  margin-bottom: 20px;
+}
+
+/* ===== CARD ===== */
+
+.card {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: 0.3s;
+}
+
+/* ===== SETTING ROW ===== */
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-text h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.setting-text p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: gray;
+}
+
+/* ===== THEME BUTTONS ===== */
+
+.theme-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.theme-buttons button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+.theme-buttons button.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
 }
