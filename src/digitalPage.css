@@ -1,18 +1,20 @@
 .digital-id-page {
   padding: 40px 60px;
   font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--text);
 }
 
-/* العنوان */
 .digital-id-page h2 {
   font-size: 26px;
   font-weight: 600;
   margin-bottom: 35px;
+  color: var(--text);
 }
 
-/* الكونتينر اللي فيه الكروت */
 .id-container {
   display: flex;
   align-items: flex-start;
-  gap: 80px; /* المسافة بين الكاردين */
+  gap: 80px;
 }

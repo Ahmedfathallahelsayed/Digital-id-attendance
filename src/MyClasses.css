@@ -1,6 +1,6 @@
 .myclasses-container {
   padding: 36px 40px;
-  background-color: #f4f6f9;
+  background-color: var(--bg);
   min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
@@ -16,7 +16,7 @@
 
 .myclasses-header h2 {
   font-size: 26px;
-  color: #1e293b;
+  color: var(--text);
   margin: 0 0 4px 0;
   font-weight: 700;
 }
@@ -28,8 +28,8 @@
 }
 
 .myclasses-count {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--input-bg);
+  color: var(--primary);
   font-size: 13px;
   font-weight: 600;
   padding: 6px 14px;
@@ -37,11 +37,11 @@
 }
 
 .join-box {
-  background: white;
+  background: var(--card-bg);
   border-radius: 14px;
   padding: 22px 24px;
   margin-bottom: 28px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
 }
 
 .join-box-title {
@@ -62,19 +62,19 @@
   flex: 1;
   height: 46px;
   padding: 0 16px;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   font-size: 15px;
-  color: #1e293b;
+  color: var(--text);
   outline: none;
   transition: border-color 0.2s;
-  background: #f8fafc;
+  background: var(--input-bg);
   box-sizing: border-box;
 }
 
 .join-input:focus {
   border-color: #6366f1;
-  background: white;
+  background: var(--card-bg);
 }
 
 .join-btn {
@@ -87,20 +87,14 @@
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: background 0.2s;
   white-space: nowrap;
   width: auto;
   margin-top: 0;
 }
 
-.join-btn:hover:not(:disabled) {
-  background: #4f46e5;
-}
-
-.join-btn:disabled {
-  background: #c7d2fe;
-  cursor: not-allowed;
-}
+.join-btn:hover:not(:disabled) { background: #4f46e5; }
+.join-btn:disabled { background: #c7d2fe; cursor: not-allowed; }
 
 .success-msg {
   background: #e8fff1;
@@ -129,10 +123,10 @@
 }
 
 .myclass-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 14px;
   padding: 22px 20px 18px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
@@ -141,7 +135,7 @@
 
 .myclass-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .myclass-number {
@@ -154,7 +148,7 @@
 .myclass-name {
   font-size: 17px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text);
   line-height: 1.4;
 }
 
@@ -175,11 +169,5 @@
   color: #94a3b8;
 }
 
-.myclasses-empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-}
-
-.myclasses-empty p {
-  font-size: 16px;
-}
+.myclasses-empty-icon { font-size: 48px; margin-bottom: 12px; }
+.myclasses-empty p { font-size: 16px; }
