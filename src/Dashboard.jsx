@@ -44,7 +44,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard">
+    <div className="Dashboard">
 
       {/* Header */}
       <div className="dashboard-header">
