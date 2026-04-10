@@ -1,6 +1,6 @@
 .attendance-page {
   padding: 36px 40px;
-  background-color: #f4f6f9;
+  background-color: var(--bg);
   min-height: 100vh;
   font-family: Arial, Helvetica, sans-serif;
   width: 100%;
@@ -18,7 +18,7 @@
 
 .attendance-header h2 {
   font-size: 26px;
-  color: #1e293b;
+  color: var(--text);
   margin: 0 0 4px 0;
   font-weight: 700;
 }
@@ -30,8 +30,8 @@
 }
 
 .attendance-count {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: var(--input-bg);
+  color: var(--primary);
   font-size: 13px;
   font-weight: 600;
   padding: 6px 14px;
@@ -39,8 +39,8 @@
 }
 
 .attendance-empty {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 40px 24px;
   text-align: center;
@@ -54,10 +54,10 @@
 }
 
 .attendance-card {
-  background: white;
+  background: var(--card-bg);
   border-radius: 14px;
   padding: 22px 20px 18px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
   display: flex;
@@ -67,7 +67,7 @@
 
 .attendance-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .attendance-card-number {
@@ -80,7 +80,7 @@
 .attendance-card-name {
   font-size: 17px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text);
   line-height: 1.4;
 }
 
@@ -102,7 +102,7 @@
 .attendance-back-btn {
   width: auto;
   background: transparent;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid var(--border);
   color: #6366f1;
   font-size: 14px;
   font-weight: 600;
@@ -113,13 +113,13 @@
 }
 
 .attendance-back-btn:hover {
-  background: #eef2ff;
+  background: var(--input-bg);
 }
 
 .attendance-table-wrap {
-  background: white;
+  background: var(--card-bg);
   border-radius: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   overflow: hidden;
 }
 
@@ -129,24 +129,24 @@
 }
 
 .attendance-table thead {
-  background: #f8fafc;
+  background: var(--input-bg);
 }
 
 .attendance-table th,
 .attendance-table td {
   padding: 14px 16px;
   text-align: left;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--border);
 }
 
 .attendance-table th {
-  color: #334155;
+  color: var(--text);
   font-size: 14px;
   font-weight: 700;
 }
 
 .attendance-table td {
-  color: #475569;
+  color: var(--text);
   font-size: 14px;
 }
 
@@ -160,8 +160,6 @@
   font-weight: 700;
 }
 
-/* ================= STUDENT SCHEDULE ================= */
-
 .schedule-days {
   display: flex;
   flex-direction: column;
@@ -169,19 +167,19 @@
 }
 
 .schedule-day-card {
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
 }
 
 .schedule-day-title {
-  background: #eef2ff;
-  color: #4338ca;
+  background: var(--input-bg);
+  color: var(--primary);
   font-size: 16px;
   font-weight: 700;
   padding: 16px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .schedule-list {
@@ -195,12 +193,10 @@
   align-items: center;
   gap: 16px;
   padding: 18px 20px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
-.schedule-item:last-child {
-  border-bottom: none;
-}
+.schedule-item:last-child { border-bottom: none; }
 
 .schedule-item-main {
   display: flex;
@@ -211,7 +207,7 @@
 .schedule-class-name {
   font-size: 16px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text);
 }
 
 .schedule-class-code {
@@ -221,12 +217,12 @@
 }
 
 .schedule-time {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
   padding: 8px 12px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #475569;
+  color: var(--text);
   white-space: nowrap;
 }
