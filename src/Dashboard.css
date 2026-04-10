@@ -345,3 +345,175 @@
   border-radius: 10px;
   cursor: pointer;
 }
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* Upcoming header */
+.upcoming-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Class item */
+.class-item {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  transition: 0.2s;
+}
+
+.class-item:hover {
+  background: #f1f5f9;
+}
+
+.class-title {
+  font-weight: 600;
+}
+
+/* Fix cards responsive */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+} /* ===== FIX CARDS DESIGN ===== */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.card-top h4 {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.card h2 {
+  font-size: 26px;
+  margin: 10px 0 5px;
+  color: #0f172a;
+}
+
+.card span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.green {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+/* ===== HEADER FIX ===== */
+.dashboard-header h2 {
+  margin: 0;
+}
+
+.dashboard-header p {
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ===== CHART ===== */
+.chart {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 150px;
+  margin-top: 10px;
+}
+
+.bars div {
+  flex: 1;
+  background: #2563eb;
+  border-radius: 6px;
+}
+
+/* ===== UPCOMING ===== */
+.upcoming {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.upcoming-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.class-item {
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.class-item:hover {
+  background: #f1f5f9;
+}
+
+.class-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ===== QUICK ===== */
+.quick {
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  padding: 20px;
+  border-radius: 16px;
+  color: white;
+}
+
+.quick button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
