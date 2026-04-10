@@ -1,8 +1,8 @@
 .manage-container {
-  padding: 36px 40px;
-  background-color: #f4f6f9;
+  padding: 32px 36px;
+  background: #f4f6f9;
   min-height: 100vh;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "DM Sans", Arial, Helvetica, sans-serif;
   width: 100%;
   box-sizing: border-box;
 }
@@ -11,39 +11,41 @@
   width: auto;
   background: transparent;
   border: 1.5px solid #e2e8f0;
-  color: #6366f1;
+  color: #4f46e5;
   font-size: 14px;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 9px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 24px;
-  transition: background 0.2s;
+  margin-bottom: 22px;
+  transition: all 0.2s ease;
 }
 
 .back-btn:hover {
   background: #eef2ff;
+  border-color: #c7d2fe;
 }
 
 .manage-header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
 }
 
-.manage-header h2 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #1e293b;
+.manage-title-wrap h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
   margin: 0 0 4px;
+  letter-spacing: -0.5px;
 }
 
 .manage-sub {
   font-size: 14px;
-  color: #64748b;
+  color: #6b7280;
   margin: 0;
 }
 
@@ -55,33 +57,35 @@
 
 .meta-chip {
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 10px 14px;
-  min-width: 140px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 12px 16px;
+  min-width: 148px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
 .meta-label {
   display: block;
   font-size: 12px;
-  color: #64748b;
+  color: #6b7280;
   margin-bottom: 4px;
 }
 
 .meta-value {
   display: block;
   font-size: 14px;
-  color: #1e293b;
+  color: #111827;
   font-weight: 700;
 }
 
 .qr-section {
   background: white;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  padding: 32px;
+  border-radius: 22px;
+  border: 1px solid #e5e7eb;
+  padding: 34px 28px;
   margin-bottom: 24px;
   text-align: center;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
 .start-box {
@@ -92,35 +96,37 @@
 }
 
 .start-icon {
-  font-size: 48px;
+  font-size: 52px;
 }
 
 .start-box p {
-  color: #64748b;
+  color: #6b7280;
   font-size: 15px;
   margin: 0;
-  max-width: 420px;
+  max-width: 460px;
+  line-height: 1.7;
 }
 
 .start-btn {
   width: auto;
-  background: #6366f1;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
   border: none;
   padding: 13px 28px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: all 0.2s ease;
 }
 
 .start-btn:hover:not(:disabled) {
-  background: #4f46e5;
+  opacity: 0.95;
+  transform: translateY(-1px);
 }
 
 .start-btn:active:not(:disabled) {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .start-btn:disabled {
@@ -148,18 +154,19 @@
   color: #16a34a;
   font-size: 13px;
   font-weight: 700;
-  padding: 5px 14px;
-  border-radius: 20px;
+  padding: 6px 14px;
+  border-radius: 999px;
 }
 
 .session-code {
-  font-size: 14px;
+  font-size: 15px;
   color: #475569;
+  font-weight: 600;
 }
 
 .session-code strong {
-  color: #1e293b;
-  font-size: 16px;
+  color: #111827;
+  font-size: 17px;
   letter-spacing: 2px;
 }
 
@@ -167,13 +174,23 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+
+.qr-card {
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
 }
 
 .qr-hint {
   font-size: 13px;
   color: #94a3b8;
   margin: 0;
+  max-width: 360px;
+  line-height: 1.6;
 }
 
 .qr-timer-box {
@@ -183,8 +200,8 @@
   gap: 4px;
   background: #f8fafc;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 10px 16px;
+  border-radius: 14px;
+  padding: 12px 18px;
   min-width: 180px;
 }
 
@@ -194,8 +211,8 @@
 }
 
 .qr-timer-value {
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 24px;
+  font-weight: 800;
   color: #4f46e5;
   letter-spacing: 1px;
 }
@@ -209,19 +226,19 @@
 
 .change-btn {
   width: auto;
-  background: #6366f1;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
   color: white;
   border: none;
   padding: 11px 24px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .change-btn:hover {
-  background: #4f46e5;
+  opacity: 0.95;
 }
 
 .end-btn {
@@ -230,11 +247,11 @@
   border: 1.5px solid #fca5a5;
   color: #dc2626;
   padding: 11px 24px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .end-btn:hover {
@@ -243,12 +260,13 @@
 
 .attendance-section {
   background: white;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  border: 1px solid #e5e7eb;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
 }
 
-.attendance-header {
+.attendance-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -256,10 +274,10 @@
   border-bottom: 1px solid #f1f5f9;
 }
 
-.attendance-header h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1e293b;
+.attendance-head h3 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111827;
   margin: 0;
 }
 
@@ -268,15 +286,15 @@
   color: #4338ca;
   font-size: 13px;
   font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 20px;
-  min-width: 28px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  min-width: 32px;
   text-align: center;
 }
 
 .no-students {
   text-align: center;
-  padding: 40px;
+  padding: 44px 20px;
   color: #94a3b8;
   font-size: 15px;
 }
@@ -290,7 +308,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 14px 24px;
+  padding: 15px 24px;
   border-bottom: 1px solid #f8fafc;
   transition: background 0.15s;
 }
@@ -305,7 +323,7 @@
 
 .student-num {
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   color: #94a3b8;
   min-width: 24px;
 }
@@ -316,18 +334,19 @@
 
 .student-name {
   font-size: 15px;
-  font-weight: 600;
-  color: #1e293b;
+  font-weight: 700;
+  color: #111827;
 }
 
 .student-id {
   font-size: 13px;
   color: #94a3b8;
+  margin-top: 2px;
 }
 
 .check-icon {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   background: #dcfce7;
   color: #16a34a;
   border-radius: 50%;
@@ -335,5 +354,47 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .manage-container {
+    padding: 24px 18px;
+  }
+
+  .manage-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .manage-meta {
+    width: 100%;
+  }
+
+  .meta-chip {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 600px) {
+  .session-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .change-btn,
+  .end-btn,
+  .start-btn {
+    width: 100%;
+  }
+
+  .student-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .check-icon {
+    margin-left: auto;
+  }
 }

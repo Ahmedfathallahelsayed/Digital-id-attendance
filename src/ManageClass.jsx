@@ -8,7 +8,7 @@ import {
   where,
   doc,
   getDoc,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { QRCodeCanvas } from "qrcode.react";
@@ -16,6 +16,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import "./ManageClass.css";
 
 const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+const QR_REFRESH_MS = 5 * 60 * 1000;
 
 export default function ManageClass() {
   const { classId } = useParams();
@@ -30,7 +31,11 @@ export default function ManageClass() {
   const [loading, setLoading] = useState(false);
 
   const [lectureDate, setLectureDate] = useState("");
+  const [lastQrChange, setLastQrChange] = useState("—");
+  const [countdown, setCountdown] = useState(QR_REFRESH_MS / 1000);
+
   const pollRef = useRef(null);
+  const countdownRef = useRef(null);
 
   const formatDate = (dateObj) =>
     dateObj.toLocaleDateString("en-GB", {
@@ -38,6 +43,18 @@ export default function ManageClass() {
       month: "short",
       year: "numeric",
     });
+
+  const formatTime = (dateObj) =>
+    dateObj.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  const formatCountdown = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  };
 
   const randomCode = () =>
     Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -47,6 +64,34 @@ export default function ManageClass() {
       clearInterval(pollRef.current);
       pollRef.current = null;
     }
+  };
+
+  const clearCountdown = () => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+  };
+
+  const startCountdown = () => {
+    clearCountdown();
+    setCountdown(QR_REFRESH_MS / 1000);
+
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          return QR_REFRESH_MS / 1000;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const fetchAttendees = async (sid) => {
+    const q = query(collection(db, "attendance"), where("sessionId", "==", sid));
+    const snap = await getDocs(q);
+    const students = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setScannedStudents(students);
   };
 
   const startPolling = (sid) => {
@@ -60,8 +105,10 @@ export default function ManageClass() {
     setSessionCode(code);
     setAttendanceUrl(`${window.location.origin}/attend/${sid}`);
     setLectureDate(formatDate(createdAtDate));
+    setLastQrChange(formatTime(new Date()));
     setSessionActive(true);
     startPolling(sid);
+    startCountdown();
   };
 
   useEffect(() => {
@@ -75,7 +122,10 @@ export default function ManageClass() {
 
     fetchClass();
 
-    return () => clearPolling();
+    return () => {
+      clearPolling();
+      clearCountdown();
+    };
   }, [classId]);
 
   const findOpenLectureSession = async () => {
@@ -143,7 +193,6 @@ export default function ManageClass() {
       }
 
       const code = randomCode();
-      setSessionCode(code);
 
       const sessionRef = await addDoc(collection(db, "sessions"), {
         classId,
@@ -152,16 +201,8 @@ export default function ManageClass() {
         active: true,
       });
 
-      setSessionId(sessionRef.id);
-
-      const url = `${window.location.origin}/attend/${sessionRef.id}`;
-      setAttendanceUrl(url);
-
-      setLectureDate(formatDate(new Date()));
-      setSessionActive(true);
+      applySession(sessionRef.id, code, new Date());
       setScannedStudents([]);
-
-      startPolling(sessionRef.id);
     } catch (error) {
       console.log("Start session error:", error);
     }
@@ -169,19 +210,45 @@ export default function ManageClass() {
     setLoading(false);
   };
 
-  const fetchAttendees = async (sid) => {
-    const q = query(collection(db, "attendance"), where("sessionId", "==", sid));
-    const snap = await getDocs(q);
-    const students = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-    setScannedStudents(students);
+  const handleChangeQr = async () => {
+    if (!sessionId) return;
+
+    const newCode = randomCode();
+    setSessionCode(newCode);
+    setLastQrChange(formatTime(new Date()));
+    setCountdown(QR_REFRESH_MS / 1000);
+
+    try {
+      await updateDoc(doc(db, "sessions", sessionId), {
+        code: newCode,
+        qrUpdatedAt: new Date(),
+      });
+    } catch (error) {
+      console.log("Change QR error:", error);
+    }
   };
 
-  const stopSession = () => {
+  const handleEndSession = async () => {
+    if (!sessionId) return;
+
+    try {
+      await updateDoc(doc(db, "sessions", sessionId), {
+        active: false,
+        endedAt: new Date(),
+      });
+    } catch (error) {
+      console.log("End session error:", error);
+    }
+
     clearPolling();
+    clearCountdown();
+
     setSessionActive(false);
     setAttendanceUrl("");
     setSessionCode("");
     setSessionId(null);
+    setCountdown(QR_REFRESH_MS / 1000);
+    setLastQrChange("—");
   };
 
   return (
@@ -191,7 +258,7 @@ export default function ManageClass() {
       </button>
 
       <div className="manage-header">
-        <div>
+        <div className="manage-title-wrap">
           <h2>{className || "Loading..."}</h2>
           <p className="manage-sub">Attendance Manager</p>
         </div>
@@ -206,6 +273,11 @@ export default function ManageClass() {
             <span className="meta-label">Lecture Window</span>
             <span className="meta-value">2 hours</span>
           </div>
+
+          <div className="meta-chip">
+            <span className="meta-label">Last QR Change</span>
+            <span className="meta-value">{lastQrChange}</span>
+          </div>
         </div>
       </div>
 
@@ -217,6 +289,7 @@ export default function ManageClass() {
               Start a lecture session. If a session already exists within 2
               hours, it will be resumed automatically.
             </p>
+
             <button
               className="start-btn"
               onClick={startSession}
@@ -235,25 +308,46 @@ export default function ManageClass() {
             </div>
 
             <div className="qr-wrapper">
-              <QRCodeCanvas
-                value={attendanceUrl}
-                size={200}
-                bgColor="#ffffff"
-                fgColor="#000000"
-                style={{ borderRadius: "12px", border: "6px solid #f1f5f9" }}
-              />
-              <p className="qr-hint">Students scan this with their phone</p>
+              <div className="qr-card">
+                <QRCodeCanvas
+                  value={attendanceUrl}
+                  size={210}
+                  bgColor="#ffffff"
+                  fgColor="#111827"
+                  style={{
+                    borderRadius: "14px",
+                    border: "8px solid #f8fafc",
+                  }}
+                />
+              </div>
+
+              <p className="qr-hint">
+                Students scan this with their phone. QR refresh timer is shown below.
+              </p>
+
+              <div className="qr-timer-box">
+                <span className="qr-timer-label">Next QR change in</span>
+                <span className="qr-timer-value">
+                  {formatCountdown(countdown)}
+                </span>
+              </div>
             </div>
 
-            <button className="stop-btn" onClick={stopSession}>
-              Stop Session
-            </button>
+            <div className="session-actions">
+              <button className="change-btn" onClick={handleChangeQr}>
+                Change QR
+              </button>
+
+              <button className="end-btn" onClick={handleEndSession}>
+                End Session
+              </button>
+            </div>
           </div>
         )}
       </div>
 
       <div className="attendance-section">
-        <div className="attendance-header">
+        <div className="attendance-head">
           <h3>Checked In Students</h3>
           <span className="count-badge">{scannedStudents.length}</span>
         </div>
@@ -269,6 +363,7 @@ export default function ManageClass() {
             {scannedStudents.map((s, i) => (
               <div key={s.id} className="student-row">
                 <div className="student-num">{i + 1}</div>
+
                 <div className="student-info">
                   <div className="student-name">
                     {s.studentName || "Unknown"}
@@ -277,6 +372,7 @@ export default function ManageClass() {
                     {s.studentId || s.studentIdNumber || ""}
                   </div>
                 </div>
+
                 <div className="check-icon">✓</div>
               </div>
             ))}
