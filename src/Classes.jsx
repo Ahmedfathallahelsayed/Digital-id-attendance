@@ -27,6 +27,16 @@ export default function Classes() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
 
+  // 🔥 تحويل الوقت لـ AM/PM
+  const formatTo12Hour = (time24) => {
+    const [hour, minute] = time24.split(":");
+    let h = parseInt(hour);
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${minute} ${ampm}`;
+  };
+
+  // 🔥 تحميل الكلاسات + حساب عدد الطلاب (FIXED)
   useEffect(() => {
     const fetchClasses = async () => {
       const user = auth.currentUser;
@@ -34,7 +44,7 @@ export default function Classes() {
 
       const q = query(
         collection(db, "classes"),
-        where("instructorId", "==", user.uid)
+        where("instructorId", "==", user.uid),
       );
 
       const snapshot = await getDocs(q);
@@ -43,9 +53,10 @@ export default function Classes() {
         snapshot.docs.map(async (docItem) => {
           const classData = { id: docItem.id, ...docItem.data() };
 
+          // ✅ FIX ENROLL
           const enrollQuery = query(
             collection(db, "enrollments"),
-            where("classDocId", "==", docItem.id)
+            where("classId", "==", docItem.id),
           );
 
           const enrollSnapshot = await getDocs(enrollQuery);
@@ -54,7 +65,7 @@ export default function Classes() {
             ...classData,
             enrolledCount: enrollSnapshot.size,
           };
-        })
+        }),
       );
 
       setClasses(classesData);
@@ -63,14 +74,16 @@ export default function Classes() {
     fetchClasses();
   }, []);
 
+  // 🔥 إنشاء كلاس (FIXED)
   const handleCreateClass = async () => {
     if (
-      className.trim() === "" ||
-      classCode.trim() === "" ||
-      day.trim() === "" ||
-      startTime.trim() === "" ||
-      endTime.trim() === ""
+      !className.trim() ||
+      !classCode.trim() ||
+      !day.trim() ||
+      !startTime.trim() ||
+      !endTime.trim()
     ) {
+      alert("Please fill all fields");
       return;
     }
 
@@ -79,35 +92,49 @@ export default function Classes() {
 
     setLoading(true);
 
-    const newClassData = {
-      name: className,
-      classId: classCode,
-      day,
-      startTime,
-      endTime,
-      instructorId: user.uid,
-      createdAt: new Date(),
-    };
+    try {
+      const newClassData = {
+        name: className,
 
-    const docRef = await addDoc(collection(db, "classes"), newClassData);
+        // ✅ FIX
+        classCode: classCode.toUpperCase(),
 
-    setClasses([
-      ...classes,
-      {
-        id: docRef.id,
-        ...newClassData,
-        enrolledCount: 0,
-      },
-    ]);
+        day,
 
-    setClassName("");
-    setClassCode("");
-    setDay("");
-    setStartTime("");
-    setEndTime("");
+        // ✅ FIX
+        fromTime: formatTo12Hour(startTime),
+        toTime: formatTo12Hour(endTime),
+
+        instructorId: user.uid,
+        createdAt: new Date(),
+      };
+
+      const docRef = await addDoc(collection(db, "classes"), newClassData);
+
+      setClasses([
+        ...classes,
+        {
+          id: docRef.id,
+          ...newClassData,
+          enrolledCount: 0,
+        },
+      ]);
+
+      // reset
+      setClassName("");
+      setClassCode("");
+      setDay("");
+      setStartTime("");
+      setEndTime("");
+    } catch (e) {
+      console.log(e);
+      alert("Error creating class");
+    }
+
     setLoading(false);
   };
 
+  // 🔥 حذف كلاس
   const openDeleteModal = (classId) => {
     setSelectedClass(classId);
     setShowDeleteModal(true);
@@ -141,6 +168,7 @@ export default function Classes() {
         </div>
       </div>
 
+      {/* 🔥 CREATE */}
       <div className="create-box">
         <div className="create-box-title">Create New Class</div>
 
@@ -156,7 +184,7 @@ export default function Classes() {
 
           <input
             type="text"
-            placeholder="Class ID (e.g. CS317)"
+            placeholder="Class Code (e.g. CS317)"
             value={classCode}
             onChange={(e) => setClassCode(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -169,12 +197,12 @@ export default function Classes() {
             onChange={(e) => setDay(e.target.value)}
           >
             <option value="">Select Day</option>
-            <option value="Saturday">Saturday</option>
-            <option value="Sunday">Sunday</option>
-            <option value="Monday">Monday</option>
-            <option value="Tuesday">Tuesday</option>
-            <option value="Wednesday">Wednesday</option>
-            <option value="Thursday">Thursday</option>
+            <option>Saturday</option>
+            <option>Sunday</option>
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
           </select>
 
           <input
@@ -196,11 +224,11 @@ export default function Classes() {
             onClick={handleCreateClass}
             disabled={
               loading ||
-              !className.trim() ||
-              !classCode.trim() ||
-              !day.trim() ||
-              !startTime.trim() ||
-              !endTime.trim()
+              !className ||
+              !classCode ||
+              !day ||
+              !startTime ||
+              !endTime
             }
           >
             {loading ? "Creating..." : "+ Create"}
@@ -208,10 +236,11 @@ export default function Classes() {
         </div>
       </div>
 
+      {/* 🔥 LIST */}
       {classes.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📚</div>
-          <p>No classes yet. Create your first one above!</p>
+          <p>No classes yet. Create your first one!</p>
         </div>
       ) : (
         <div className="classes-grid">
@@ -230,10 +259,11 @@ export default function Classes() {
 
               <div className="card-name">{c.name}</div>
 
-              <div className="card-code">Class Code: {c.classId}</div>
+              {/* ✅ FIX */}
+              <div className="card-code">Class Code: {c.classCode}</div>
 
               <div className="card-schedule">
-                {c.day} • {c.startTime} - {c.endTime}
+                {c.day} • {c.fromTime} - {c.toTime}
               </div>
 
               <div className="card-enrolled">
@@ -251,6 +281,7 @@ export default function Classes() {
         </div>
       )}
 
+      {/* 🔥 DELETE MODAL */}
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="delete-modal">
@@ -265,10 +296,7 @@ export default function Classes() {
                 Cancel
               </button>
 
-              <button
-                className="confirm-delete-btn"
-                onClick={confirmDelete}
-              >
+              <button className="confirm-delete-btn" onClick={confirmDelete}>
                 Delete
               </button>
             </div>
