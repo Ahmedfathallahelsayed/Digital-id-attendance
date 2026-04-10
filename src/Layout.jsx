@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { auth } from "./auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, onSnapshot } from "firebase/firestore";
 import {
   FaTachometerAlt,
   FaUserCheck,
@@ -27,7 +27,9 @@ export default function Layout() {
 
   useEffect(() => {
     const db = getFirestore();
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    let unsubSnapshot = null;
+
+    const unsubAuth = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         navigate("/");
         return;
@@ -35,8 +37,8 @@ export default function Layout() {
 
       setUserEmail(user.email);
 
-      try {
-        const docSnap = await getDoc(doc(db, "users", user.uid));
+      // استخدم onSnapshot بدل getDoc عشان الصورة تتحدث فورًا
+      unsubSnapshot = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
           setFirstName(data.firstName);
@@ -44,12 +46,13 @@ export default function Layout() {
           setRole(data.role);
           setPhotoURL(data.photoURL || null);
         }
-      } catch (err) {
-        console.log("Error:", err);
-      }
+      });
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubAuth();
+      if (unsubSnapshot) unsubSnapshot();
+    };
   }, [navigate]);
 
   const handleLogout = async () => {
@@ -133,7 +136,6 @@ export default function Layout() {
             </>
           )}
 
-          {/* Settings للجميع */}
           <p
             className={`menu-item ${isActive("/settings") ? "active" : ""}`}
             onClick={() => navigate("/settings")}
@@ -165,7 +167,11 @@ export default function Layout() {
               onClick={() => navigate("/profile")}
             >
               {photoURL ? (
-                <img src={photoURL} alt="Profile" />
+                <img
+                  src={photoURL}
+                  alt="Profile"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+                />
               ) : (
                 initials
               )}
