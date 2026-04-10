@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  addDoc,
-} from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
 import { db, auth } from "./firebase";
 import "./MyClasses.css";
 
@@ -22,7 +16,7 @@ export default function MyClasses() {
 
     const q = query(
       collection(db, "enrollments"),
-      where("studentId", "==", user.uid)
+      where("studentId", "==", user.uid),
     );
 
     const snapshot = await getDocs(q);
@@ -43,7 +37,7 @@ export default function MyClasses() {
     setMessage("");
     setError("");
 
-    if (classCode.trim() === "") return;
+    if (!classCode.trim()) return;
 
     const user = auth.currentUser;
     if (!user) return;
@@ -51,10 +45,10 @@ export default function MyClasses() {
     setLoading(true);
 
     try {
-      // دور على الكلاس بالكود
+      // ✅ FIX هنا
       const classQuery = query(
         collection(db, "classes"),
-        where("classId", "==", classCode.trim())
+        where("classCode", "==", classCode.trim().toUpperCase()),
       );
 
       const classSnapshot = await getDocs(classQuery);
@@ -68,11 +62,11 @@ export default function MyClasses() {
       const classDoc = classSnapshot.docs[0];
       const classData = classDoc.data();
 
-      // نتأكد إنه مش مشترك قبل كده
+      // ✅ FIX هنا
       const enrollQuery = query(
         collection(db, "enrollments"),
         where("studentId", "==", user.uid),
-        where("classDocId", "==", classDoc.id)
+        where("classId", "==", classDoc.id),
       );
 
       const enrollSnapshot = await getDocs(enrollQuery);
@@ -83,15 +77,15 @@ export default function MyClasses() {
         return;
       }
 
-      // ضيف enrollment
+      // ✅ FIX هنا
       await addDoc(collection(db, "enrollments"), {
         studentId: user.uid,
-        classDocId: classDoc.id,
-        classId: classData.classId,
+        classId: classDoc.id,
+        classCode: classData.classCode,
         className: classData.name,
         day: classData.day,
-        startTime: classData.startTime,
-        endTime: classData.endTime,
+        fromTime: classData.fromTime,
+        toTime: classData.toTime,
         instructorId: classData.instructorId,
         joinedAt: new Date(),
       });
@@ -140,7 +134,7 @@ export default function MyClasses() {
           <button
             className="join-btn"
             onClick={handleJoinClass}
-            disabled={loading || classCode.trim() === ""}
+            disabled={loading || !classCode.trim()}
           >
             {loading ? "Joining..." : "Join"}
           </button>
@@ -162,10 +156,12 @@ export default function MyClasses() {
 
               <div className="myclass-name">{c.className}</div>
 
-              <div className="myclass-code">Class Code: {c.classId}</div>
+              {/* ✅ FIX */}
+              <div className="myclass-code">Class Code: {c.classCode}</div>
 
+              {/* ✅ FIX */}
               <div className="myclass-schedule">
-                {c.day} • {c.startTime} - {c.endTime}
+                {c.day} • {c.fromTime} - {c.toTime}
               </div>
             </div>
           ))}
