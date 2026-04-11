@@ -1,0 +1,192 @@
+/* ===== Overlay ===== */
+.qr-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+/* ===== Modal Box ===== */
+.qr-modal {
+  background: var(--card-bg, #fff);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.qr-modal-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text, #1e293b);
+}
+
+.qr-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--bg-secondary, #f1f5f9);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text, #1e293b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.qr-modal-close:hover {
+  background: var(--border, #e2e8f0);
+}
+
+/* ===== Video ===== */
+.qr-video-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+}
+
+.qr-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* إطار المسح */
+.qr-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-frame {
+  width: 65%;
+  aspect-ratio: 1;
+  border: 3px solid #3b82f6;
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+  animation: qr-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes qr-pulse {
+  0%, 100% { border-color: #3b82f6; }
+  50%       { border-color: #60a5fa; }
+}
+
+.qr-loading-text {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 0.85rem;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* ===== Result ===== */
+.qr-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.qr-result-icon {
+  font-size: 3rem;
+}
+
+.qr-result p {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text, #1e293b);
+}
+
+.qr-result.success p { color: #16a34a; }
+.qr-result.error   p { color: #dc2626; }
+.qr-result.already p { color: #d97706; }
+
+.qr-result-btn {
+  margin-top: 8px;
+  padding: 10px 28px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.qr-result-btn:hover {
+  background: #2563eb;
+}
+
+/* ===== Scan button in Settings ===== */
+.settings-scan-card {
+  border: 2px dashed #3b82f6;
+  background: rgba(59, 130, 246, 0.04);
+}
+
+.settings-scan-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px;
+  margin-top: 14px;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.settings-scan-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.settings-scan-btn:active {
+  transform: translateY(0);
+}
+
+/* dark mode */
+body.dark-mode .qr-modal {
+  background: #1e293b;
+}
+
+body.dark-mode .qr-modal-title,
+body.dark-mode .qr-result p {
+  color: #f1f5f9;
+}
+
+body.dark-mode .qr-modal-close {
+  background: #334155;
+  color: #f1f5f9;
+}

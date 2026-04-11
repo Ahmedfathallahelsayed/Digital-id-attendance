@@ -1,30 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "./auth";
-import { onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+} from "firebase/auth";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import "./Settings.css";
+import QRScannerModal from "./Qrscannermodal.jsx";
 
 function Settings() {
-  const [theme, setTheme] = useState("system");
-  const [email, setEmail] = useState(true);
-  const [push, setPush] = useState(false);
-  const navigate = useNavigate();
+  const [theme, setTheme]           = useState("system");
+  const [emailNotif, setEmailNotif] = useState(true);
+  const [push, setPush]             = useState(false);
+  const [role, setRole]             = useState("");
+  const [showScanner, setShowScanner] = useState(false);
   const db = getFirestore();
 
-  // بيانات اليوزر
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName]   = useState("");
+  const [lastName, setLastName]     = useState("");
   const [nameSuccess, setNameSuccess] = useState("");
-  const [nameError, setNameError] = useState("");
+  const [nameError, setNameError]   = useState("");
   const [nameLoading, setNameLoading] = useState(false);
 
-  // باسورد
   const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
+  const [newPassword, setNewPassword]         = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passSuccess, setPassSuccess] = useState("");
-  const [passError, setPassError] = useState("");
+  const [passError, setPassError]     = useState("");
   const [passLoading, setPassLoading] = useState(false);
 
   useEffect(() => {
@@ -38,7 +43,8 @@ function Settings() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setFirstName(data.firstName || "");
-        setLastName(data.lastName || "");
+        setLastName(data.lastName  || "");
+        setRole(data.role          || "");
       }
     });
     return () => unsubscribe();
@@ -72,11 +78,11 @@ function Settings() {
       const user = auth.currentUser;
       await updateDoc(doc(db, "users", user.uid), {
         firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        lastName:  lastName.trim(),
       });
       setNameSuccess("Name updated successfully ✓");
       setTimeout(() => setNameSuccess(""), 3000);
-    } catch (err) {
+    } catch {
       setNameError("Something went wrong.");
     }
     setNameLoading(false);
@@ -99,7 +105,7 @@ function Settings() {
     }
     setPassLoading(true);
     try {
-      const user = auth.currentUser;
+      const user       = auth.currentUser;
       const credential = EmailAuthProvider.credential(user.email, currentPassword);
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
@@ -109,18 +115,40 @@ function Settings() {
       setConfirmPassword("");
       setTimeout(() => setPassSuccess(""), 3000);
     } catch (err) {
-      if (err.code === "auth/wrong-password") {
-        setPassError("Current password is incorrect.");
-      } else {
-        setPassError("Something went wrong.");
-      }
+      setPassError(
+        err.code === "auth/wrong-password"
+          ? "Current password is incorrect."
+          : "Something went wrong."
+      );
     }
     setPassLoading(false);
   };
 
+  const THEMES = [
+    { key: "light",  label: "Light",  icon: "🌞" },
+    { key: "dark",   label: "Dark",   icon: "🌙" },
+    { key: "system", label: "System", icon: "💻" },
+  ];
+
   return (
     <div className="settings-page">
       <h2 className="settings-title">Settings</h2>
+
+      {/* QR Scanner — student only */}
+      {role === "student" && (
+        <div className="settings-card settings-scan-card">
+          <div className="settings-card-header">
+            <span className="settings-card-icon">📷</span>
+            <div>
+              <h3>Scan Attendance QR</h3>
+              <p>Scan the lecture QR code to mark your attendance</p>
+            </div>
+          </div>
+          <button className="settings-scan-btn" onClick={() => setShowScanner(true)}>
+            📷 Open QR Scanner
+          </button>
+        </div>
+      )}
 
       {/* Appearance */}
       <div className="settings-card">
@@ -132,14 +160,10 @@ function Settings() {
           </div>
         </div>
         <div className="theme-buttons">
-          {[
-            { key: "light",  label: "Light",  icon: "🌞" },
-            { key: "dark",   label: "Dark",   icon: "🌙" },
-            { key: "system", label: "System", icon: "💻" },
-          ].map((t) => (
+          {THEMES.map((t) => (
             <button
               key={t.key}
-              className={`theme-btn ${theme === t.key ? "active" : ""}`}
+              className={`theme-btn${theme === t.key ? " active" : ""}`}
               onClick={() => changeTheme(t.key)}
             >
               <span>{t.icon}</span>
@@ -158,7 +182,6 @@ function Settings() {
             <p>Update your first and last name</p>
           </div>
         </div>
-
         <div className="settings-fields">
           <div className="settings-field-row">
             <div className="settings-field">
@@ -167,7 +190,7 @@ function Settings() {
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="First Name"
+                placeholder="First name"
               />
             </div>
             <div className="settings-field">
@@ -176,20 +199,18 @@ function Settings() {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Last Name"
+                placeholder="Last name"
               />
             </div>
           </div>
-
-          {nameError && <p className="settings-msg error">{nameError}</p>}
+          {nameError   && <p className="settings-msg error">{nameError}</p>}
           {nameSuccess && <p className="settings-msg success">{nameSuccess}</p>}
-
           <button
             className="settings-save-btn"
             onClick={handleSaveName}
             disabled={nameLoading}
           >
-            {nameLoading ? "Saving..." : "Save Name"}
+            {nameLoading ? "Saving…" : "Save Name"}
           </button>
         </div>
       </div>
@@ -203,7 +224,6 @@ function Settings() {
             <p>Update your account password</p>
           </div>
         </div>
-
         <div className="settings-fields">
           <div className="settings-field">
             <label>Current Password</label>
@@ -232,16 +252,14 @@ function Settings() {
               placeholder="Confirm new password"
             />
           </div>
-
-          {passError && <p className="settings-msg error">{passError}</p>}
+          {passError   && <p className="settings-msg error">{passError}</p>}
           {passSuccess && <p className="settings-msg success">{passSuccess}</p>}
-
           <button
             className="settings-save-btn"
             onClick={handleChangePassword}
             disabled={passLoading}
           >
-            {passLoading ? "Updating..." : "Update Password"}
+            {passLoading ? "Updating…" : "Update Password"}
           </button>
         </div>
       </div>
@@ -255,18 +273,16 @@ function Settings() {
             <p>Manage your notification preferences</p>
           </div>
         </div>
-
         <div className="settings-row">
           <div className="settings-row-text">
             <h4>Email Notifications</h4>
             <p>Receive updates via email</p>
           </div>
           <label className="toggle">
-            <input type="checkbox" checked={email} onChange={() => setEmail(!email)} />
+            <input type="checkbox" checked={emailNotif} onChange={() => setEmailNotif(!emailNotif)} />
             <span className="toggle-slider" />
           </label>
         </div>
-
         <div className="settings-row">
           <div className="settings-row-text">
             <h4>Push Notifications</h4>
@@ -279,6 +295,7 @@ function Settings() {
         </div>
       </div>
 
+      {showScanner && <QRScannerModal onClose={() => setShowScanner(false)} />}
     </div>
   );
 }
