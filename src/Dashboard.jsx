@@ -45,6 +45,17 @@ function Dashboard() {
   const [studentActivityFeed, setStudentActivityFeed] = useState([]);
   const [instructorActivityFeed, setInstructorActivityFeed] = useState([]);
 
+  // ================= ADMIN STATE =================
+  const [adminUsersCount, setAdminUsersCount] = useState(0);
+  const [adminStudentsCount, setAdminStudentsCount] = useState(0);
+  const [adminInstructorsCount, setAdminInstructorsCount] = useState(0);
+  const [adminClassesCount, setAdminClassesCount] = useState(0);
+  const [adminSessionsCount, setAdminSessionsCount] = useState(0);
+  const [adminAttendanceCount, setAdminAttendanceCount] = useState(0);
+  const [adminWeeklyChart, setAdminWeeklyChart] = useState([]);
+  const [adminActivityFeed, setAdminActivityFeed] = useState([]);
+  const [adminClassesOverview, setAdminClassesOverview] = useState([]);
+
   const dayNames = [
     "Sunday",
     "Monday",
@@ -312,6 +323,7 @@ function Dashboard() {
               const sessionData = sessionDoc.data();
               const sessionDate = toDateSafe(sessionData.createdAt);
               totalSessions += 1;
+
               const attendanceQuery = query(
                 collection(db, "attendance"),
                 where("sessionId", "==", sessionDoc.id),
@@ -360,6 +372,126 @@ function Dashboard() {
           activityItems.sort((a, b) => (b.date || 0) - (a.date || 0));
           setStudentActivityFeed(activityItems.slice(0, 5));
         }
+
+        // ================= ADMIN =================
+        if (userRole === "admin") {
+          const usersSnap = await getDocs(collection(db, "users"));
+          const classesSnap = await getDocs(collection(db, "classes"));
+          const sessionsSnap = await getDocs(collection(db, "sessions"));
+          const attendanceSnap = await getDocs(collection(db, "attendance"));
+
+          const usersData = usersSnap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }));
+
+          const classesData = classesSnap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }));
+
+          const sessionsData = sessionsSnap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }));
+
+          const attendanceData = attendanceSnap.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }));
+
+          const studentsCount = usersData.filter((u) => u.role === "student").length;
+          const instructorsCount = usersData.filter(
+            (u) => u.role === "instructor"
+          ).length;
+
+          setAdminUsersCount(usersData.length);
+          setAdminStudentsCount(studentsCount);
+          setAdminInstructorsCount(instructorsCount);
+          setAdminClassesCount(classesData.length);
+          setAdminSessionsCount(sessionsData.length);
+          setAdminAttendanceCount(attendanceData.length);
+
+          const usersMap = {};
+          usersData.forEach((u) => {
+            const fullName =
+              `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.email || "Unknown";
+            usersMap[u.id] = fullName;
+          });
+
+          const classesOverviewData = await Promise.all(
+            classesData.map(async (cls) => {
+              const enrollQuery = query(
+                collection(db, "enrollments"),
+                where("classId", "==", cls.id)
+              );
+              const enrollSnap = await getDocs(enrollQuery);
+
+              return {
+                ...cls,
+                instructorName: usersMap[cls.instructorId] || "Unknown Instructor",
+                enrolledCount: enrollSnap.size,
+              };
+            })
+          );
+
+          setAdminClassesOverview(classesOverviewData);
+
+          const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
+          sessionsData.forEach((session) => {
+            const sessionDate = toDateSafe(session.createdAt);
+            if (sessionDate && isWithinCurrentWeek(sessionDate)) {
+              weeklyCounts[sessionDate.getDay()] += 1;
+            }
+          });
+
+          setAdminWeeklyChart(
+            chartDays.map((label, index) => ({
+              day: label,
+              value: weeklyCounts[index],
+            }))
+          );
+
+          const activityItems = [];
+
+          classesData.forEach((cls) => {
+            const createdDate = toDateSafe(cls.createdAt);
+            if (createdDate) {
+              activityItems.push({
+                text: `New class created: ${cls.name || "Class"} (${cls.classCode || "—"})`,
+                date: createdDate,
+              });
+            }
+          });
+
+          sessionsData.forEach((session) => {
+            const sessionDate = toDateSafe(session.createdAt);
+            const classInfo = classesData.find((c) => c.id === session.classId);
+            if (sessionDate) {
+              activityItems.push({
+                text: `Session started for ${classInfo?.name || "a class"}`,
+                date: sessionDate,
+              });
+            }
+          });
+
+          attendanceData.forEach((item) => {
+            const attDate =
+              toDateSafe(item.timestamp) ||
+              toDateSafe(item.createdAt) ||
+              toDateSafe(item.date);
+
+            if (attDate) {
+              activityItems.push({
+                text: `${item.studentName || "Student"} attendance recorded`,
+                date: attDate,
+              });
+            }
+          });
+
+          activityItems.sort((a, b) => (b.date || 0) - (a.date || 0));
+          setAdminActivityFeed(activityItems.slice(0, 6));
+        }
       } catch (error) {
         console.log("Dashboard error:", error);
       }
@@ -383,7 +515,9 @@ function Dashboard() {
   )[0];
 
   const nextStudentClass = [...todayStudentClasses].sort((a, b) =>
-    ((a.fromTime || a.startTime) || "").localeCompare((b.fromTime || b.startTime) || "")
+    ((a.fromTime || a.startTime) || "").localeCompare(
+      (b.fromTime || b.startTime) || ""
+    )
   )[0];
 
   if (loading) {
@@ -452,7 +586,9 @@ function Dashboard() {
             <h3>{todayStudentClasses.length}</h3>
             <p>
               {nextStudentClass
-                ? `Next: ${nextStudentClass.fromTime || nextStudentClass.startTime || "—"}`
+                ? `Next: ${
+                    nextStudentClass.fromTime || nextStudentClass.startTime || "—"
+                  }`
                 : "No classes today"}
             </p>
           </div>
@@ -566,7 +702,8 @@ function Dashboard() {
 
                   <div className="schedule-time-pill">
                     <FaClock />
-                    {(item.fromTime || item.startTime || "—")} - {(item.toTime || item.endTime || "—")}
+                    {(item.fromTime || item.startTime || "—")} -{" "}
+                    {(item.toTime || item.endTime || "—")}
                   </div>
                 </div>
               ))}
@@ -771,6 +908,211 @@ function Dashboard() {
             instructorActivityFeed,
           }}
         />
+      </section>
+    );
+  }
+
+  // ================= ADMIN VIEW =================
+  if (role === "admin") {
+    return (
+      <section className="dashboard-shell">
+        <div className="dashboard-page-head">
+          <div>
+            <h2>Admin Dashboard</h2>
+            <p>Welcome back, here’s a full overview of the system.</p>
+          </div>
+
+          <div className="dashboard-head-actions">
+            <div className="date-pill">
+              <FaCalendarAlt />
+              <span>{shortDate}</span>
+            </div>
+
+            <button
+              className="primary-head-btn"
+              onClick={() => navigate("/instructors")}
+            >
+              View Instructors
+            </button>
+          </div>
+        </div>
+
+        <div className="dashboard-stats-grid four-cols">
+          <div className="stat-card">
+            <div className="stat-top">
+              <span>Total Users</span>
+              <div className="stat-icon blue">
+                <FaUsers />
+              </div>
+            </div>
+            <h3>{adminUsersCount}</h3>
+            <p>All registered accounts</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-top">
+              <span>Total Students</span>
+              <div className="stat-icon green">
+                <FaUserCheck />
+              </div>
+            </div>
+            <h3>{adminStudentsCount}</h3>
+            <p>Registered students</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-top">
+              <span>Total Instructors</span>
+              <div className="stat-icon purple">
+                <FaChalkboardTeacher />
+              </div>
+            </div>
+            <h3>{adminInstructorsCount}</h3>
+            <p>Teaching staff</p>
+          </div>
+
+          <div className="stat-card">
+            <div className="stat-top">
+              <span>Total Classes</span>
+              <div className="stat-icon orange">
+                <FaBookOpen />
+              </div>
+            </div>
+            <h3>{adminClassesCount}</h3>
+            <p>Created courses</p>
+          </div>
+        </div>
+
+        <div className="dashboard-main-grid">
+          <div className="dashboard-large-card">
+            <div className="card-head">
+              <h3>Weekly Sessions Overview</h3>
+              <span>This Week</span>
+            </div>
+
+            <div className="bar-chart">
+              {adminWeeklyChart.map((item) => (
+                <div key={item.day} className="bar-item">
+                  <div className="bar-value">{item.value}</div>
+                  <div
+                    className="bar-fill"
+                    style={{ height: `${Math.max(item.value * 28, 12)}px` }}
+                  />
+                  <div className="bar-label">{item.day}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="dashboard-side-stack">
+            <div className="dashboard-side-card">
+              <div className="card-head">
+                <h3>Activity Feed</h3>
+              </div>
+
+              <div className="feed-list">
+                {adminActivityFeed.length === 0 ? (
+                  <div className="empty-dashboard-state">
+                    No recent activity found.
+                  </div>
+                ) : (
+                  adminActivityFeed.map((item, index) => (
+                    <div key={index} className="feed-item">
+                      <span className="feed-dot" />
+                      <div>
+                        <strong>{item.text}</strong>
+                        <p>{formatFeedTime(item.date)}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="quick-card">
+              <h3>Quick Access</h3>
+              <p>Common tasks for admin.</p>
+
+              <button
+                className="quick-action-btn"
+                onClick={() => navigate("/instructors")}
+              >
+                <FaUsers /> View Instructors
+              </button>
+
+              <button
+                className="quick-action-btn"
+                onClick={() => navigate("/attendance")}
+              >
+                <FaClipboardList /> View Attendance
+              </button>
+
+              <button
+                className="quick-action-btn"
+                onClick={() => navigate("/dashboard")}
+              >
+                <FaChartLine /> System Overview
+              </button>
+            </div>
+
+            <div className="dashboard-side-card">
+              <div className="card-head">
+                <h3>System Totals</h3>
+              </div>
+
+              <div className="feed-list">
+                <div className="feed-item">
+                  <span className="feed-dot" />
+                  <div>
+                    <strong>Total Sessions</strong>
+                    <p>{adminSessionsCount}</p>
+                  </div>
+                </div>
+
+                <div className="feed-item">
+                  <span className="feed-dot" />
+                  <div>
+                    <strong>Attendance Records</strong>
+                    <p>{adminAttendanceCount}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="dashboard-bottom-card">
+          <div className="card-head">
+            <h3>Classes Overview</h3>
+            <span>{adminClassesOverview.length} classes</span>
+          </div>
+
+          {adminClassesOverview.length === 0 ? (
+            <div className="empty-dashboard-state">
+              No classes found in the system.
+            </div>
+          ) : (
+            <div className="schedule-list">
+              {adminClassesOverview.slice(0, 8).map((item) => (
+                <div key={item.id} className="schedule-row">
+                  <div className="schedule-badge">CLS</div>
+
+                  <div className="schedule-main">
+                    <h4>{item.name}</h4>
+                    <p>
+                      {item.classCode || "—"} • {item.instructorName}
+                    </p>
+                  </div>
+
+                  <div className="schedule-time-pill">
+                    <FaUsers />
+                    {item.enrolledCount || 0} students
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </section>
     );
   }

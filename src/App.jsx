@@ -16,7 +16,9 @@ import InstructorClasses from "./InstructorClasses";
 import Attendance from "./Attendance.jsx";
 import ClassAttendance from "./ClassAttendance";
 import Profile from "./Profile.jsx";
-
+import Students from "./Students";
+import StudentClasses from "./StudentClasses";
+import StudentClassAttendance from "./StudentClassAttendance";
 import "./App.css";
 
 function App() {
@@ -48,6 +50,12 @@ function App() {
           <Route path="/digital-id" element={<DigitalIdPage />} />
           <Route path="/my-classes" element={<MyClasses />} />
           <Route path="/attendance" element={<Attendance />} />
+          <Route path="/students" element={<Students />} />
+<Route path="/admin/student/:id" element={<StudentClasses />} />
+<Route
+  path="/admin/student/:studentId/class/:classId"
+  element={<StudentClassAttendance />}
+/>
           <Route path="/attendance/class/:classId" element={<ClassAttendance />} />
           <Route
             path="/attendance/class/:classId/session/:sessionId"
@@ -62,6 +70,7 @@ function App() {
             path="/admin/class/:id/session/:sessionId"
             element={<ClassAttendance />}
           />
+          
         </Route>
       </Routes>
     </Router>
