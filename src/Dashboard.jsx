@@ -312,11 +312,10 @@ function Dashboard() {
               const sessionData = sessionDoc.data();
               const sessionDate = toDateSafe(sessionData.createdAt);
               totalSessions += 1;
-
               const attendanceQuery = query(
                 collection(db, "attendance"),
                 where("sessionId", "==", sessionDoc.id),
-                where("studentId", "==", user.uid)
+                where("studentUid", "==", user.uid)
               );
               const attendanceSnap = await getDocs(attendanceQuery);
 
