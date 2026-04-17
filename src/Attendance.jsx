@@ -38,7 +38,7 @@ export default function Attendance() {
         const currentRole = userData.role || "";
         setRole(currentRole);
 
-        // Instructor
+        // ================= INSTRUCTOR =================
         if (currentRole === "instructor") {
           const q = query(
             collection(db, "classes"),
@@ -55,7 +55,7 @@ export default function Attendance() {
           setClasses(data);
         }
 
-        // Student
+        // ================= STUDENT =================
         if (currentRole === "student") {
           const q = query(
             collection(db, "enrollments"),
@@ -77,7 +77,8 @@ export default function Attendance() {
 
             grouped[day].push({
               className: item.className,
-              classId: item.classId,
+              // ✅ FIX: استخدم classDocId لو موجود، لو لأ استخدم classId
+              classId: item.classDocId || item.classId,
               startTime: item.startTime,
               endTime: item.endTime,
             });

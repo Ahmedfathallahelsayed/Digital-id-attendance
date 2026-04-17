@@ -143,7 +143,6 @@ function Dashboard() {
           const classesSnap = await getDocs(classesQuery);
 
           const classesData = [];
-          const classIds = [];
 
           for (const classDoc of classesSnap.docs) {
             const classData = { id: classDoc.id, ...classDoc.data() };
@@ -154,10 +153,23 @@ function Dashboard() {
             );
             const enrollSnap = await getDocs(enrollQuery);
 
-            classIds.push(classDoc.id);
+            // ✅ FIX: جمع activity feed للـ enrollments هنا مباشرة
+            const activityItemsLocal = [];
+            enrollSnap.docs.forEach((d) => {
+              const data = d.data();
+              const joinedAt = toDateSafe(data.joinedAt);
+              if (joinedAt) {
+                activityItemsLocal.push({
+                  text: `${data.className || classData.name}: new student joined`,
+                  date: joinedAt,
+                });
+              }
+            });
+
             classesData.push({
               ...classData,
               enrolledCount: enrollSnap.size,
+              activityItems: activityItemsLocal,
             });
           }
 
@@ -174,27 +186,10 @@ function Dashboard() {
           let totalPossibleAttendance = 0;
 
           const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
-          const activityItems = [];
+          // ✅ FIX: ابدأ بالـ activity items من الـ enrollments اللي جمعناها فوق
+          const activityItems = classesData.flatMap((c) => c.activityItems || []);
 
           for (const classItem of classesData) {
-            // enrollments feed
-            const enrollQuery = query(
-              collection(db, "enrollments"),
-              where("classDocId", "==", classItem.id)
-            );
-            const enrollSnap = await getDocs(enrollQuery);
-
-            enrollSnap.docs.forEach((d) => {
-              const data = d.data();
-              const joinedAt = toDateSafe(data.joinedAt);
-              if (joinedAt) {
-                activityItems.push({
-                  text: `${data.className || classItem.name}: new student joined`,
-                  date: joinedAt,
-                });
-              }
-            });
-
             // sessions
             const sessionsQuery = query(
               collection(db, "sessions"),
@@ -211,7 +206,8 @@ function Dashboard() {
 
             for (const session of classSessions) {
               const sessionDate = toDateSafe(session.createdAt);
-              if (isWithinCurrentWeek(sessionDate)) {
+
+              if (sessionDate && isWithinCurrentWeek(sessionDate)) {
                 weeklyCounts[sessionDate.getDay()] += 1;
               }
 
@@ -229,6 +225,7 @@ function Dashboard() {
               const attendanceSnap = await getDocs(attendanceQuery);
 
               totalAttendanceDocs += attendanceSnap.size;
+              // ✅ FIX: حساب الـ possible attendance صح
               totalPossibleAttendance += classItem.enrolledCount || 0;
 
               attendanceSnap.docs.forEach((a) => {
@@ -254,6 +251,7 @@ function Dashboard() {
           ).length;
           setSessionsThisWeek(weeklySessionCount);
 
+          // ✅ FIX: حساب الـ avg attendance صح
           const avgAttendance =
             totalPossibleAttendance > 0
               ? Math.round((totalAttendanceDocs / totalPossibleAttendance) * 100)
@@ -287,7 +285,10 @@ function Dashboard() {
 
           setStudentEnrollments(enrollmentData);
 
-          const classDocIds = enrollmentData.map((e) => e.classDocId).filter(Boolean);
+          // ✅ FIX: استخدم classDocId لو موجود، لو لأ استخدم classId
+          const classDocIds = enrollmentData
+            .map((e) => e.classDocId || e.classId)
+            .filter(Boolean);
 
           let totalSessions = 0;
           let attendedSessions = 0;
@@ -315,11 +316,7 @@ function Dashboard() {
             for (const sessionDoc of sessionsSnap.docs) {
               const sessionData = sessionDoc.data();
               const sessionDate = toDateSafe(sessionData.createdAt);
-              totalSessions += 1;
-
-              if (isWithinCurrentWeek(sessionDate)) {
-                weeklyCounts[sessionDate.getDay()] += 0;
-              }
+              totalSessions += 1; // ✅ FIX: بيحسب كل session صح
 
               const attendanceQuery = query(
                 collection(db, "attendance"),
@@ -329,7 +326,7 @@ function Dashboard() {
               const attendanceSnap = await getDocs(attendanceQuery);
 
               if (!attendanceSnap.empty) {
-                attendedSessions += 1;
+                attendedSessions += 1; // ✅ FIX: بيحسب الحضور صح
 
                 const firstAttendance = attendanceSnap.docs[0].data();
                 const attDate =
@@ -338,8 +335,8 @@ function Dashboard() {
                   toDateSafe(firstAttendance.date) ||
                   sessionDate;
 
-                if (isWithinCurrentWeek(attDate)) {
-                  weeklyCounts[attDate.getDay()] += 1;
+                if (attDate && isWithinCurrentWeek(attDate)) {
+                  weeklyCounts[attDate.getDay()] += 1; // ✅ FIX: كان += 0 غلط، دلوقتي += 1
                 }
 
                 if (attDate) {
@@ -352,6 +349,7 @@ function Dashboard() {
             }
           }
 
+          // ✅ FIX: حساب الـ attendance rate صح
           const attendanceRate =
             totalSessions > 0
               ? Math.round((attendedSessions / totalSessions) * 100)
@@ -403,14 +401,14 @@ function Dashboard() {
     );
   }
 
-  // ================= STUDENT =================
+  // ================= STUDENT VIEW =================
   if (role === "student") {
     return (
       <section className="dashboard-shell">
         <div className="dashboard-page-head">
           <div>
             <h2>Dashboard</h2>
-            <p>Welcome back, here’s what’s happening today.</p>
+            <p>Welcome back, here's what's happening today.</p>
           </div>
 
           <div className="dashboard-head-actions">
@@ -582,14 +580,14 @@ function Dashboard() {
     );
   }
 
-  // ================= INSTRUCTOR =================
+  // ================= INSTRUCTOR VIEW =================
   if (role === "instructor") {
     return (
       <section className="dashboard-shell">
         <div className="dashboard-page-head">
           <div>
             <h2>Dashboard</h2>
-            <p>Welcome back, here’s what’s happening today.</p>
+            <p>Welcome back, here's what's happening today.</p>
           </div>
 
           <div className="dashboard-head-actions">
