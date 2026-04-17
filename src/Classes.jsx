@@ -203,6 +203,8 @@ export default function Classes() {
             <option>Tuesday</option>
             <option>Wednesday</option>
             <option>Thursday</option>
+            <option>Friday</option>
+
           </select>
 
           <input

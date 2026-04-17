@@ -154,14 +154,17 @@ export default function MyClasses() {
                 {String(index + 1).padStart(2, "0")}
               </div>
 
-              <div className="myclass-name">{c.className}</div>
+              <div className="myclass-name">
+                {c.className || "Unnamed Class"}
+                </div>
 
               {/* ✅ FIX */}
-              <div className="myclass-code">Class Code: {c.classCode}</div>
+              <div className="myclass-code">
+                Class Code: {c.classCode || "-"}</div>
 
               {/* ✅ FIX */}
               <div className="myclass-schedule">
-                {c.day} • {c.fromTime} - {c.toTime}
+                {c.day || "No day"} • {c.fromTime || "--:--"} - {c.toTime || "--:--"}
               </div>
             </div>
           ))}

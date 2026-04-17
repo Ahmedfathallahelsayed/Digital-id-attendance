@@ -78,16 +78,16 @@ export default function Attendance() {
             grouped[day].push({
               className: item.className,
               // ✅ FIX: استخدم classDocId لو موجود، لو لأ استخدم classId
-              classId: item.classDocId || item.classId,
-              startTime: item.startTime,
-              endTime: item.endTime,
+              classId: item.classCode || item.classCode,
+              startTime: item.fromTime,
+              endTime: item.toTime,
             });
           });
 
           // ترتيب المواد داخل كل يوم حسب وقت البداية
           Object.keys(grouped).forEach((day) => {
             grouped[day].sort((a, b) =>
-              (a.startTime || "").localeCompare(b.startTime || "")
+              (a.fromTime || "").localeCompare(b.fromTime || "")
             );
           });
 

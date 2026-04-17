@@ -21,6 +21,7 @@ import {
   FaIdCard,
 } from "react-icons/fa";
 import "./Dashboard.css";
+import ChatAssistant from "./ChatAssistant";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -149,11 +150,10 @@ function Dashboard() {
 
             const enrollQuery = query(
               collection(db, "enrollments"),
-              where("classDocId", "==", classDoc.id)
+              where("classId", "==", classDoc.id)
             );
             const enrollSnap = await getDocs(enrollQuery);
 
-            // ✅ FIX: جمع activity feed للـ enrollments هنا مباشرة
             const activityItemsLocal = [];
             enrollSnap.docs.forEach((d) => {
               const data = d.data();
@@ -186,11 +186,9 @@ function Dashboard() {
           let totalPossibleAttendance = 0;
 
           const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
-          // ✅ FIX: ابدأ بالـ activity items من الـ enrollments اللي جمعناها فوق
           const activityItems = classesData.flatMap((c) => c.activityItems || []);
 
           for (const classItem of classesData) {
-            // sessions
             const sessionsQuery = query(
               collection(db, "sessions"),
               where("classId", "==", classItem.id)
@@ -225,7 +223,6 @@ function Dashboard() {
               const attendanceSnap = await getDocs(attendanceQuery);
 
               totalAttendanceDocs += attendanceSnap.size;
-              // ✅ FIX: حساب الـ possible attendance صح
               totalPossibleAttendance += classItem.enrolledCount || 0;
 
               attendanceSnap.docs.forEach((a) => {
@@ -251,7 +248,6 @@ function Dashboard() {
           ).length;
           setSessionsThisWeek(weeklySessionCount);
 
-          // ✅ FIX: حساب الـ avg attendance صح
           const avgAttendance =
             totalPossibleAttendance > 0
               ? Math.round((totalAttendanceDocs / totalPossibleAttendance) * 100)
@@ -285,9 +281,8 @@ function Dashboard() {
 
           setStudentEnrollments(enrollmentData);
 
-          // ✅ FIX: استخدم classDocId لو موجود، لو لأ استخدم classId
           const classDocIds = enrollmentData
-            .map((e) => e.classDocId || e.classId)
+            .map((e) => e.classId || e.classDocId)
             .filter(Boolean);
 
           let totalSessions = 0;
@@ -300,7 +295,7 @@ function Dashboard() {
             const joinedAt = toDateSafe(item.joinedAt);
             if (joinedAt) {
               activityItems.push({
-                text: `Joined ${item.className}`,
+                text: `Joined ${item.className || "class"}`,
                 date: joinedAt,
               });
             }
@@ -316,7 +311,7 @@ function Dashboard() {
             for (const sessionDoc of sessionsSnap.docs) {
               const sessionData = sessionDoc.data();
               const sessionDate = toDateSafe(sessionData.createdAt);
-              totalSessions += 1; // ✅ FIX: بيحسب كل session صح
+              totalSessions += 1;
 
               const attendanceQuery = query(
                 collection(db, "attendance"),
@@ -326,7 +321,7 @@ function Dashboard() {
               const attendanceSnap = await getDocs(attendanceQuery);
 
               if (!attendanceSnap.empty) {
-                attendedSessions += 1; // ✅ FIX: بيحسب الحضور صح
+                attendedSessions += 1;
 
                 const firstAttendance = attendanceSnap.docs[0].data();
                 const attDate =
@@ -336,7 +331,7 @@ function Dashboard() {
                   sessionDate;
 
                 if (attDate && isWithinCurrentWeek(attDate)) {
-                  weeklyCounts[attDate.getDay()] += 1; // ✅ FIX: كان += 0 غلط، دلوقتي += 1
+                  weeklyCounts[attDate.getDay()] += 1;
                 }
 
                 if (attDate) {
@@ -349,7 +344,6 @@ function Dashboard() {
             }
           }
 
-          // ✅ FIX: حساب الـ attendance rate صح
           const attendanceRate =
             totalSessions > 0
               ? Math.round((attendedSessions / totalSessions) * 100)
@@ -386,11 +380,11 @@ function Dashboard() {
   );
 
   const nextInstructorClass = [...todayInstructorClasses].sort((a, b) =>
-    (a.startTime || "").localeCompare(b.startTime || "")
+    (a.fromTime || "").localeCompare(b.fromTime || "")
   )[0];
 
   const nextStudentClass = [...todayStudentClasses].sort((a, b) =>
-    (a.startTime || "").localeCompare(b.startTime || "")
+    ((a.fromTime || a.startTime) || "").localeCompare((b.fromTime || b.startTime) || "")
   )[0];
 
   if (loading) {
@@ -457,7 +451,11 @@ function Dashboard() {
               </div>
             </div>
             <h3>{todayStudentClasses.length}</h3>
-            <p>{nextStudentClass ? `Next: ${nextStudentClass.startTime}` : "No classes today"}</p>
+            <p>
+              {nextStudentClass
+                ? `Next: ${nextStudentClass.fromTime || nextStudentClass.startTime || "—"}`
+                : "No classes today"}
+            </p>
           </div>
 
           <div className="stat-card">
@@ -564,18 +562,28 @@ function Dashboard() {
 
                   <div className="schedule-main">
                     <h4>{item.className}</h4>
-                    <p>{item.classId}</p>
+                    <p>{item.classCode || item.classId || "—"}</p>
                   </div>
 
                   <div className="schedule-time-pill">
                     <FaClock />
-                    {item.startTime} - {item.endTime}
+                    {(item.fromTime || item.startTime || "—")} - {(item.toTime || item.endTime || "—")}
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        <ChatAssistant
+          role={role}
+          data={{
+            studentAttendanceRate,
+            studentEnrollments,
+            todayStudentClasses,
+            studentActivityFeed,
+          }}
+        />
       </section>
     );
   }
@@ -614,7 +622,11 @@ function Dashboard() {
               </div>
             </div>
             <h3>{todayInstructorClasses.length}</h3>
-            <p>{nextInstructorClass ? `Next: ${nextInstructorClass.startTime}` : "No classes today"}</p>
+            <p>
+              {nextInstructorClass
+                ? `Next: ${nextInstructorClass.fromTime || "—"}`
+                : "No classes today"}
+            </p>
           </div>
 
           <div className="stat-card">
@@ -736,18 +748,30 @@ function Dashboard() {
 
                   <div className="schedule-main">
                     <h4>{item.name}</h4>
-                    <p>{item.classId}</p>
+                    <p>{item.classCode || "—"}</p>
                   </div>
 
                   <div className="schedule-time-pill">
                     <FaClock />
-                    {item.startTime} - {item.endTime}
+                    {(item.fromTime || "—")} - {(item.toTime || "—")}
                   </div>
                 </div>
               ))}
             </div>
           )}
         </div>
+
+        <ChatAssistant
+          role={role}
+          data={{
+            totalEnrolledStudents,
+            todayInstructorClasses,
+            instructorAttendanceRate,
+            sessionsThisWeek,
+            instructorClasses,
+            instructorActivityFeed,
+          }}
+        />
       </section>
     );
   }
