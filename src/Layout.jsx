@@ -85,16 +85,23 @@ export default function Layout() {
             <FaTachometerAlt /> Dashboard
           </p>
 
-          {role === "admin" && (
-            <>
-              <p
-                className={`menu-item ${isActive("/instructors") ? "active" : ""}`}
-                onClick={() => navigate("/instructors")}
-              >
-                <FaUsers /> Instructors
-              </p>
-            </>
-          )}
+              {role === "admin" && (
+        <>
+          <p
+            className={`menu-item ${isActive("/instructors") ? "active" : ""}`}
+            onClick={() => navigate("/instructors")}
+          >
+            <FaUsers /> Instructors
+          </p>
+
+          <p
+            className={`menu-item ${isActive("/students") ? "active" : ""}`}
+            onClick={() => navigate("/students")}
+          >
+            <FaBookOpen /> Students
+          </p>
+        </>
+      )}
 
           {role === "instructor" && (
             <>
