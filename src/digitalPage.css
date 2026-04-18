@@ -4,6 +4,7 @@
   background: var(--bg);
   min-height: 100vh;
   color: var(--text);
+  transition: background 0.3s, color 0.3s;
 }
 
 .digital-id-page h2 {
@@ -17,4 +18,19 @@
   display: flex;
   align-items: flex-start;
   gap: 80px;
+}
+
+body.dark-mode .id-container {
+  gap: 80px;
+}
+
+@media (max-width: 768px) {
+  .digital-id-page {
+    padding: 24px 20px;
+  }
+
+  .id-container {
+    flex-direction: column;
+    gap: 32px;
+  }
 }

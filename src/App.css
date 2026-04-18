@@ -7,6 +7,30 @@
   --input-bg: #f1f5f9;
   --border: #e5e7eb;
   --primary: #3b82f6;
+
+  /* Dashboard */
+  --dash-bg: #f4f6f9;
+  --sidebar-bg: #e8f3ff;
+  --sidebar-border: #d0e6ff;
+  --sidebar-text: #1e3a5f;
+  --sidebar-hover: #d6eaff;
+  --topbar-bg: #ffffff;
+  --topbar-border: #e2e8f0;
+  --topbar-text: #1e3a5f;
+  --stat-card-bg: #ffffff;
+  --stat-card-border: #e2e8f0;
+  --stat-text: #0f172a;
+  --stat-sub: #64748b;
+  --schedule-border: #eef2f7;
+  --schedule-pill-bg: #f8fafc;
+  --schedule-badge-bg: #eff6ff;
+  --date-pill-bg: #ffffff;
+  --feed-strong: #0f172a;
+  --card-head-text: #0f172a;
+  --bar-label: #475569;
+  --bar-value: #64748b;
+  --feed-dot-bg: #2563eb;
+  --user-name-color: #1e293b;
 }
 
 body.dark-mode {
@@ -16,6 +40,30 @@ body.dark-mode {
   --input-bg: #334155;
   --border: #475569;
   --primary: #3b82f6;
+
+  /* Dashboard */
+  --dash-bg: #0f172a;
+  --sidebar-bg: #1e293b;
+  --sidebar-border: #334155;
+  --sidebar-text: #cbd5e1;
+  --sidebar-hover: #2d3f55;
+  --topbar-bg: #1e293b;
+  --topbar-border: #334155;
+  --topbar-text: #e2e8f0;
+  --stat-card-bg: #1e293b;
+  --stat-card-border: #334155;
+  --stat-text: #f1f5f9;
+  --stat-sub: #94a3b8;
+  --schedule-border: #334155;
+  --schedule-pill-bg: #334155;
+  --schedule-badge-bg: #1e3a5f;
+  --date-pill-bg: #1e293b;
+  --feed-strong: #f1f5f9;
+  --card-head-text: #f1f5f9;
+  --bar-label: #94a3b8;
+  --bar-value: #94a3b8;
+  --feed-dot-bg: #3b82f6;
+  --user-name-color: #e2e8f0;
 }
 
 /* ===== GENERAL ===== */
@@ -24,7 +72,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: Arial;
-  transition: 0.3s;
+  transition: background 0.3s, color 0.3s;
 }
 
 /* ===== LOGIN / REGISTER ===== */
@@ -192,7 +240,7 @@ button:hover {
   padding: 20px;
   border-radius: 14px;
   margin-bottom: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   transition: 0.3s;
 }
 

@@ -27,6 +27,10 @@
   margin: 0;
 }
 
+body.dark-mode .subtitle {
+  color: #94a3b8;
+}
+
 .class-count {
   background: var(--input-bg);
   color: var(--primary);
@@ -42,6 +46,7 @@
   padding: 22px 24px;
   margin-bottom: 28px;
   border: 1px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .create-box-title {
@@ -51,6 +56,10 @@
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+}
+
+body.dark-mode .create-box-title {
+  color: #94a3b8;
 }
 
 .create-grid {
@@ -67,7 +76,7 @@
   font-size: 15px;
   color: var(--text);
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
   background: var(--input-bg);
   box-sizing: border-box;
   width: 100%;
@@ -113,7 +122,7 @@
   border-radius: 14px;
   padding: 22px 20px 18px;
   border: 1px solid var(--border);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s, border-color 0.3s;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -122,6 +131,10 @@
 .class-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .class-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .card-number {
@@ -144,9 +157,17 @@
   color: #4f46e5;
 }
 
+body.dark-mode .card-code {
+  color: #818cf8;
+}
+
 .card-schedule {
   font-size: 13px;
   color: #64748b;
+}
+
+body.dark-mode .card-schedule {
+  color: #94a3b8;
 }
 
 .card-enrolled {
@@ -156,6 +177,7 @@
   border: 1px solid var(--border);
   padding: 8px 10px;
   border-radius: 8px;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .manage-btn {
@@ -175,6 +197,10 @@
 .manage-btn:hover {
   background: var(--input-bg);
   border-color: #a5b4fc;
+}
+
+body.dark-mode .manage-btn {
+  color: #818cf8;
 }
 
 .empty-state {
@@ -215,6 +241,10 @@
   z-index: 1000;
 }
 
+body.dark-mode .modal-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
 .delete-modal {
   background: var(--card-bg);
   padding: 30px;
@@ -223,6 +253,11 @@
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   color: var(--text);
+  transition: background 0.3s;
+}
+
+body.dark-mode .delete-modal {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .modal-buttons {
@@ -238,6 +273,11 @@
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cancel-btn:hover {
+  background: var(--border);
 }
 
 .confirm-delete-btn {
@@ -247,4 +287,7 @@
   padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
 }
+
+.confirm-delete-btn:hover { background: #d93636; }

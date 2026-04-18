@@ -5,6 +5,7 @@
   background: var(--card-bg);
   border: 1px solid var(--border);
   color: var(--text);
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .card-status h4 {
@@ -17,6 +18,10 @@
   color: limegreen;
   font-size: 0.875rem;
   margin: 0;
+}
+
+body.dark-mode .status-active {
+  color: #4ade80;
 }
 
 .last-scanned {
@@ -32,6 +37,7 @@
   cursor: pointer;
   border: 1px solid var(--border);
   font-size: 0.875rem;
+  transition: background 0.2s, color 0.2s;
 }
 
 .copy-btn {
@@ -39,9 +45,21 @@
   color: var(--text);
 }
 
+.copy-btn:hover {
+  background: var(--border);
+}
+
 .report-btn {
   background-color: lightcoral;
   color: white;
   display: block;
   border: none;
+}
+
+.report-btn:hover {
+  background-color: #e05555;
+}
+
+body.dark-mode .report-btn {
+  background-color: #c0392b;
 }

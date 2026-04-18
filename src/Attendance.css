@@ -29,6 +29,10 @@
   margin: 0;
 }
 
+body.dark-mode .attendance-subtitle {
+  color: #94a3b8;
+}
+
 .attendance-count {
   background: var(--input-bg);
   color: var(--primary);
@@ -45,6 +49,11 @@
   padding: 40px 24px;
   text-align: center;
   color: #64748b;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+body.dark-mode .attendance-empty {
+  color: #94a3b8;
 }
 
 .attendance-grid {
@@ -58,7 +67,7 @@
   border-radius: 14px;
   padding: 22px 20px 18px;
   border: 1px solid var(--border);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s, border-color 0.3s;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -68,6 +77,10 @@
 .attendance-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .attendance-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .attendance-card-number {
@@ -91,12 +104,20 @@
   font-weight: 600;
 }
 
+body.dark-mode .attendance-card-link {
+  color: #818cf8;
+}
+
 .session-meta {
   display: flex;
   gap: 8px;
   color: #64748b;
   font-size: 13px;
   align-items: center;
+}
+
+body.dark-mode .session-meta {
+  color: #94a3b8;
 }
 
 .attendance-back-btn {
@@ -110,10 +131,15 @@
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 24px;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 .attendance-back-btn:hover {
   background: var(--input-bg);
+}
+
+body.dark-mode .attendance-back-btn {
+  color: #818cf8;
 }
 
 .attendance-table-wrap {
@@ -121,6 +147,7 @@
   border-radius: 14px;
   border: 1px solid var(--border);
   overflow: hidden;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .attendance-table {
@@ -130,6 +157,7 @@
 
 .attendance-table thead {
   background: var(--input-bg);
+  transition: background 0.3s;
 }
 
 .attendance-table th,
@@ -137,6 +165,7 @@
   padding: 14px 16px;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  transition: border-color 0.3s;
 }
 
 .attendance-table th {
@@ -160,6 +189,11 @@
   font-weight: 700;
 }
 
+body.dark-mode .status-pill {
+  background: rgba(22, 163, 74, 0.15);
+  color: #4ade80;
+}
+
 .schedule-days {
   display: flex;
   flex-direction: column;
@@ -171,6 +205,7 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .schedule-day-title {
@@ -180,6 +215,7 @@
   font-weight: 700;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .schedule-list {
@@ -194,6 +230,7 @@
   gap: 16px;
   padding: 18px 20px;
   border-bottom: 1px solid var(--border);
+  transition: border-color 0.3s;
 }
 
 .schedule-item:last-child { border-bottom: none; }
@@ -216,6 +253,10 @@
   font-weight: 600;
 }
 
+body.dark-mode .schedule-class-code {
+  color: #818cf8;
+}
+
 .schedule-time {
   background: var(--input-bg);
   border: 1px solid var(--border);
@@ -225,4 +266,5 @@
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;
+  transition: background 0.3s, border-color 0.3s;
 }
