@@ -27,12 +27,8 @@ function App() {
 
     if (savedTheme === "dark") {
       document.body.classList.add("dark-mode");
-    } else if (savedTheme === "light") {
-      document.body.classList.remove("dark-mode");
     } else {
-      // system mode
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.body.classList.toggle("dark-mode", prefersDark);
+      document.body.classList.remove("dark-mode");
     }
   }, []);
 
@@ -51,12 +47,15 @@ function App() {
           <Route path="/my-classes" element={<MyClasses />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/students" element={<Students />} />
-<Route path="/admin/student/:id" element={<StudentClasses />} />
-<Route
-  path="/admin/student/:studentId/class/:classId"
-  element={<StudentClassAttendance />}
-/>
-          <Route path="/attendance/class/:classId" element={<ClassAttendance />} />
+          <Route path="/admin/student/:id" element={<StudentClasses />} />
+          <Route
+            path="/admin/student/:studentId/class/:classId"
+            element={<StudentClassAttendance />}
+          />
+          <Route
+            path="/attendance/class/:classId"
+            element={<ClassAttendance />}
+          />
           <Route
             path="/attendance/class/:classId/session/:sessionId"
             element={<ClassAttendance />}
@@ -70,7 +69,6 @@ function App() {
             path="/admin/class/:id/session/:sessionId"
             element={<ClassAttendance />}
           />
-          
         </Route>
       </Routes>
     </Router>
