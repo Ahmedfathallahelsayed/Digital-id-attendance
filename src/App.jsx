@@ -20,6 +20,8 @@ import Students from "./Students";
 import StudentClasses from "./StudentClasses";
 import StudentClassAttendance from "./StudentClassAttendance";
 import "./App.css";
+import StudentRequests from "./StudentRequests";
+import AdminRequests from "./AdminRequests";
 
 function App() {
   useEffect(() => {
@@ -47,6 +49,8 @@ function App() {
           <Route path="/my-classes" element={<MyClasses />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route path="/students" element={<Students />} />
+          <Route path="/requests" element={<StudentRequests />} />
+<Route path="/admin/requests" element={<AdminRequests />} />
           <Route path="/admin/student/:id" element={<StudentClasses />} />
           <Route
             path="/admin/student/:studentId/class/:classId"

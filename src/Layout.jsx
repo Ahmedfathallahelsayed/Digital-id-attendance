@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { auth } from "./auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { getFirestore, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { getFirestore, doc, onSnapshot } from "firebase/firestore";
 import {
   FaTachometerAlt,
   FaUserCheck,
@@ -12,6 +12,7 @@ import {
   FaCog,
   FaUsers,
   FaBookOpen,
+  FaEnvelopeOpenText,
 } from "react-icons/fa";
 import "./Dashboard.css";
 
@@ -37,13 +38,12 @@ export default function Layout() {
 
       setUserEmail(user.email);
 
-      // استخدم onSnapshot بدل getDoc عشان الصورة تتحدث فورًا
       unsubSnapshot = onSnapshot(doc(db, "users", user.uid), (docSnap) => {
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setFirstName(data.firstName);
-          setLastName(data.lastName);
-          setRole(data.role);
+          setFirstName(data.firstName || "");
+          setLastName(data.lastName || "");
+          setRole(data.role || "");
           setPhotoURL(data.photoURL || null);
         }
       });
@@ -64,13 +64,13 @@ export default function Layout() {
     location.pathname === path || location.pathname.startsWith(path + "/");
 
   const displayName = firstName ? `${firstName} ${lastName}` : userEmail;
+
   const initials = firstName
     ? `${firstName[0]}${lastName ? lastName[0] : ""}`.toUpperCase()
     : (userEmail[0] || "?").toUpperCase();
 
   return (
     <div className="dashboard-container">
-      {/* ===== SIDEBAR ===== */}
       <aside className="sidebar">
         <div className="sidebar-logo">
           <div className="sidebar-logo-icon">CU</div>
@@ -85,32 +85,46 @@ export default function Layout() {
             <FaTachometerAlt /> Dashboard
           </p>
 
-              {role === "admin" && (
-        <>
-          <p
-            className={`menu-item ${isActive("/instructors") ? "active" : ""}`}
-            onClick={() => navigate("/instructors")}
-          >
-            <FaUsers /> Instructors
-          </p>
+          {role === "admin" && (
+            <>
+              <p
+                className={`menu-item ${
+                  isActive("/instructors") ? "active" : ""
+                }`}
+                onClick={() => navigate("/instructors")}
+              >
+                <FaUsers /> Instructors
+              </p>
 
-          <p
-            className={`menu-item ${isActive("/students") ? "active" : ""}`}
-            onClick={() => navigate("/students")}
-          >
-            <FaBookOpen /> Students
-          </p>
-        </>
-      )}
+              <p
+                className={`menu-item ${isActive("/students") ? "active" : ""}`}
+                onClick={() => navigate("/students")}
+              >
+                <FaBookOpen /> Students
+              </p>
+
+              <p
+                className={`menu-item ${
+                  isActive("/admin/requests") ? "active" : ""
+                }`}
+                onClick={() => navigate("/admin/requests")}
+              >
+                <FaEnvelopeOpenText /> Requests
+              </p>
+            </>
+          )}
 
           {role === "instructor" && (
             <>
               <p
-                className={`menu-item ${isActive("/attendance") ? "active" : ""}`}
+                className={`menu-item ${
+                  isActive("/attendance") ? "active" : ""
+                }`}
                 onClick={() => navigate("/attendance")}
               >
                 <FaUserCheck /> Attendance
               </p>
+
               <p
                 className={`menu-item ${isActive("/classes") ? "active" : ""}`}
                 onClick={() => navigate("/classes")}
@@ -123,22 +137,37 @@ export default function Layout() {
           {role === "student" && (
             <>
               <p
-                className={`menu-item ${isActive("/attendance") ? "active" : ""}`}
+                className={`menu-item ${
+                  isActive("/attendance") ? "active" : ""
+                }`}
                 onClick={() => navigate("/attendance")}
               >
                 <FaUserCheck /> Attendance
               </p>
+
               <p
-                className={`menu-item ${isActive("/my-classes") ? "active" : ""}`}
+                className={`menu-item ${
+                  isActive("/my-classes") ? "active" : ""
+                }`}
                 onClick={() => navigate("/my-classes")}
               >
                 <FaBookOpen /> My Classes
               </p>
+
               <p
-                className={`menu-item ${isActive("/digital-id") ? "active" : ""}`}
+                className={`menu-item ${
+                  isActive("/digital-id") ? "active" : ""
+                }`}
                 onClick={() => navigate("/digital-id")}
               >
                 <FaIdCard /> Digital ID
+              </p>
+
+              <p
+                className={`menu-item ${isActive("/requests") ? "active" : ""}`}
+                onClick={() => navigate("/requests")}
+              >
+                <FaEnvelopeOpenText /> Requests
               </p>
             </>
           )}
@@ -158,7 +187,6 @@ export default function Layout() {
         </div>
       </aside>
 
-      {/* ===== MAIN ===== */}
       <main className="main-content">
         <header className="topbar">
           <h3>Faculty of Science</h3>
@@ -169,15 +197,17 @@ export default function Layout() {
               {role && <span className="user-role">{role}</span>}
             </div>
 
-            <div
-              className="user-avatar"
-              onClick={() => navigate("/profile")}
-            >
+            <div className="user-avatar" onClick={() => navigate("/profile")}>
               {photoURL ? (
                 <img
                   src={photoURL}
                   alt="Profile"
-                  style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "50%",
+                  }}
                 />
               ) : (
                 initials
