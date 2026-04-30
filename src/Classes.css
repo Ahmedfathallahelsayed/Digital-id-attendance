@@ -291,3 +291,114 @@ body.dark-mode .delete-modal {
 }
 
 .confirm-delete-btn:hover { background: #d93636; }
+.search-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.search-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--input-bg);
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: #6366f1;
+  background: var(--card-bg);
+}
+
+.search-count {
+  background: var(--input-bg);
+  color: var(--primary);
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 44px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #4f46e5;
+}
+
+.edit-modal {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 14px;
+  width: 420px;
+  max-width: calc(100vw - 28px);
+  text-align: left;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  color: var(--text);
+}
+
+.edit-modal h3 {
+  margin: 0 0 18px;
+}
+
+.edit-modal .course-input {
+  margin-bottom: 12px;
+}
+
+.edit-hint {
+  margin: 2px 0 10px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+body.dark-mode .edit-hint {
+  color: #94a3b8;
+}
+
+.confirm-edit-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.confirm-edit-btn:hover {
+  background: #4f46e5;
+}
+
+@media (max-width: 700px) {
+  .search-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-count {
+    width: fit-content;
+  }
+}

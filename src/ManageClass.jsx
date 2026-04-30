@@ -26,6 +26,7 @@ export default function ManageClass() {
   const [sessionCode, setSessionCode] = useState("");
   const [attendanceUrl, setAttendanceUrl] = useState("");
   const [scannedStudents, setScannedStudents] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionId, setSessionId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -94,6 +95,30 @@ export default function ManageClass() {
     setScannedStudents(students);
   };
 
+  const fetchReviews = async () => {
+    try {
+      const q = query(collection(db, "reviews"), where("classId", "==", classId));
+      const snap = await getDocs(q);
+
+      const data = snap.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+      }));
+
+      setReviews(data);
+    } catch (error) {
+      console.log("Fetch reviews error:", error);
+    }
+  };
+
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0) /
+          reviews.length
+        ).toFixed(1)
+      : "0.0";
+
   const startPolling = (sid) => {
     clearPolling();
     fetchAttendees(sid);
@@ -121,6 +146,7 @@ export default function ManageClass() {
     };
 
     fetchClass();
+    fetchReviews();
 
     return () => {
       clearPolling();
@@ -374,6 +400,40 @@ export default function ManageClass() {
                 </div>
 
                 <div className="check-icon">✓</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="reviews-section">
+        <div className="attendance-head">
+          <h3>Student Reviews</h3>
+          <span className="count-badge">{reviews.length}</span>
+        </div>
+
+        <div className="reviews-summary">
+          <div className="reviews-average">{averageRating}</div>
+          <div>
+            <div className="reviews-stars">
+              {"⭐".repeat(Math.round(Number(averageRating)))}
+            </div>
+            <p>Average rating from students</p>
+          </div>
+        </div>
+
+        {reviews.length === 0 ? (
+          <div className="no-students">No reviews yet.</div>
+        ) : (
+          <div className="reviews-list">
+            {reviews.map((review) => (
+              <div key={review.id} className="review-card">
+                <div className="review-top">
+                  <strong>{review.studentName || "Student"}</strong>
+                  <span>{"⭐".repeat(Number(review.rating || 0))}</span>
+                </div>
+
+                <p>{review.comment}</p>
               </div>
             ))}
           </div>
