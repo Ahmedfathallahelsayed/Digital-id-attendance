@@ -15,7 +15,7 @@ import Groq from "groq-sdk";
 import "./ChatAssistant.css";
 
 const groq = new Groq({
-  apiKey: process.env.EXPO_PUBLIC_GROQ_API_KEY,
+  apiKey: import.meta.env.VITE_GROQ_API_KEY,
   dangerouslyAllowBrowser: true,
 });
 
