@@ -69,7 +69,7 @@ function Register() {
 
           {/* Role Selector */}
           <div className="reg-roles">
-            {["student", "instructor", "admin"].map((r) => (
+            {["student", "instructor"].map((r) => (
               <button
                 key={r}
                 type="button"
