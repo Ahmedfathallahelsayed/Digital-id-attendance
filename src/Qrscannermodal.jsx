@@ -8,7 +8,7 @@ import {
   addDoc,
   Timestamp,
 } from "firebase/firestore";
-import "./QRScannerModal.css";
+import "./Qrscannermodal.css";
 
 export default function QRScannerModal({ onClose }) {
   const videoRef = useRef(null);
@@ -43,14 +43,17 @@ export default function QRScannerModal({ onClose }) {
   };
 
   const stopAll = () => {
-    if (streamRef.current) streamRef.current.getTracks().forEach((t) => t.stop());
+    if (streamRef.current)
+      streamRef.current.getTracks().forEach((t) => t.stop());
     if (intervalRef.current) clearInterval(intervalRef.current);
   };
 
   const startScanInterval = () => {
     if (!("BarcodeDetector" in window)) {
       setStatus("error");
-      setMessage("QR scanning is not supported on this browser. Please use Chrome on Android/Desktop.");
+      setMessage(
+        "QR scanning is not supported on this browser. Please use Chrome on Android/Desktop.",
+      );
       return;
     }
 
@@ -106,8 +109,8 @@ export default function QRScannerModal({ onClose }) {
         query(
           collection(db, "enrollments"),
           where("studentId", "==", user.uid),
-          where("classId", "==", classId)
-        )
+          where("classId", "==", classId),
+        ),
       );
       if (enrollSnap.empty) {
         setStatus("error");
@@ -120,8 +123,8 @@ export default function QRScannerModal({ onClose }) {
         query(
           collection(db, "attendance"),
           where("studentId", "==", user.uid),
-          where("sessionId", "==", sessionId)
-        )
+          where("sessionId", "==", sessionId),
+        ),
       );
       if (!attSnap.empty) {
         setStatus("already");
@@ -160,7 +163,9 @@ export default function QRScannerModal({ onClose }) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="qr-modal">
-        <button className="qr-modal-close" onClick={onClose}>✕</button>
+        <button className="qr-modal-close" onClick={onClose}>
+          ✕
+        </button>
         <h3 className="qr-modal-title">Scan QR Code</h3>
 
         {/* الكاميرا */}
@@ -192,7 +197,9 @@ export default function QRScannerModal({ onClose }) {
           <div className="qr-result success">
             <span className="qr-result-icon">✅</span>
             <p>{message}</p>
-            <button className="qr-result-btn" onClick={onClose}>Close</button>
+            <button className="qr-result-btn" onClick={onClose}>
+              Close
+            </button>
           </div>
         )}
 
@@ -201,7 +208,9 @@ export default function QRScannerModal({ onClose }) {
           <div className="qr-result already">
             <span className="qr-result-icon">ℹ️</span>
             <p>{message}</p>
-            <button className="qr-result-btn" onClick={onClose}>Close</button>
+            <button className="qr-result-btn" onClick={onClose}>
+              Close
+            </button>
           </div>
         )}
 
