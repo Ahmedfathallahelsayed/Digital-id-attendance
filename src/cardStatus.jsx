@@ -1,5 +1,5 @@
 import React from "react";
-import "./CardStatus.css";
+import "./cardStatus.css";
 
 export default function CardStatus({ student }) {
   const copyId = () => {
