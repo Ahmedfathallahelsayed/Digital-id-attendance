@@ -150,7 +150,7 @@ function Dashboard() {
         if (userRole === "instructor") {
           const classesQuery = query(
             collection(db, "classes"),
-            where("instructorId", "==", user.uid)
+            where("instructorId", "==", user.uid),
           );
           const classesSnap = await getDocs(classesQuery);
 
@@ -161,7 +161,7 @@ function Dashboard() {
 
             const enrollQuery = query(
               collection(db, "enrollments"),
-              where("classId", "==", classDoc.id)
+              where("classId", "==", classDoc.id),
             );
             const enrollSnap = await getDocs(enrollQuery);
 
@@ -188,7 +188,7 @@ function Dashboard() {
 
           const totalStudents = classesData.reduce(
             (sum, item) => sum + (item.enrolledCount || 0),
-            0
+            0,
           );
           setTotalEnrolledStudents(totalStudents);
 
@@ -196,13 +196,17 @@ function Dashboard() {
           let totalAttendanceDocs = 0;
           let totalPossibleAttendance = 0;
 
+          // weeklyCounts: index = day of week (0=Sun ... 6=Sat)
+          // counts ALL sessions ever, grouped by day-of-week
           const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
-          const activityItems = classesData.flatMap((c) => c.activityItems || []);
+          const activityItems = classesData.flatMap(
+            (c) => c.activityItems || [],
+          );
 
           for (const classItem of classesData) {
             const sessionsQuery = query(
               collection(db, "sessions"),
-              where("classId", "==", classItem.id)
+              where("classId", "==", classItem.id),
             );
             const sessionsSnap = await getDocs(sessionsQuery);
 
@@ -216,7 +220,8 @@ function Dashboard() {
             for (const session of classSessions) {
               const sessionDate = toDateSafe(session.createdAt);
 
-              if (sessionDate && isWithinCurrentWeek(sessionDate)) {
+              // FIX: count ALL sessions by day-of-week, not just current week
+              if (sessionDate) {
                 weeklyCounts[sessionDate.getDay()] += 1;
               }
 
@@ -229,7 +234,7 @@ function Dashboard() {
 
               const attendanceQuery = query(
                 collection(db, "attendance"),
-                where("sessionId", "==", session.id)
+                where("sessionId", "==", session.id),
               );
               const attendanceSnap = await getDocs(attendanceQuery);
 
@@ -255,13 +260,15 @@ function Dashboard() {
           }
 
           const weeklySessionCount = allSessions.filter((s) =>
-            isWithinCurrentWeek(toDateSafe(s.createdAt))
+            isWithinCurrentWeek(toDateSafe(s.createdAt)),
           ).length;
           setSessionsThisWeek(weeklySessionCount);
 
           const avgAttendance =
             totalPossibleAttendance > 0
-              ? Math.round((totalAttendanceDocs / totalPossibleAttendance) * 100)
+              ? Math.round(
+                  (totalAttendanceDocs / totalPossibleAttendance) * 100,
+                )
               : 0;
 
           setInstructorAttendanceRate(avgAttendance);
@@ -270,7 +277,7 @@ function Dashboard() {
             chartDays.map((label, index) => ({
               day: label,
               value: weeklyCounts[index],
-            }))
+            })),
           );
 
           activityItems.sort((a, b) => (b.date || 0) - (a.date || 0));
@@ -281,7 +288,7 @@ function Dashboard() {
         if (userRole === "student") {
           const enrollmentsQuery = query(
             collection(db, "enrollments"),
-            where("studentId", "==", user.uid)
+            where("studentId", "==", user.uid),
           );
           const enrollmentsSnap = await getDocs(enrollmentsQuery);
 
@@ -299,7 +306,18 @@ function Dashboard() {
           let totalSessions = 0;
           let attendedSessions = 0;
 
+          // Chart: count scheduled classes per day-of-week from enrollments
+          // Uses the 'day' field on each enrollment (e.g. "Saturday", "Friday")
           const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
+
+          enrollmentData.forEach((item) => {
+            const enrollDay = normalizeDay(item.day || "");
+            const dayIndex = dayNames.indexOf(enrollDay);
+            if (dayIndex !== -1) {
+              weeklyCounts[dayIndex] += 1;
+            }
+          });
+
           const activityItems = [];
 
           enrollmentData.forEach((item) => {
@@ -315,7 +333,7 @@ function Dashboard() {
           for (const classDocId of classDocIds) {
             const sessionsQuery = query(
               collection(db, "sessions"),
-              where("classId", "==", classDocId)
+              where("classId", "==", classDocId),
             );
             const sessionsSnap = await getDocs(sessionsQuery);
 
@@ -327,7 +345,7 @@ function Dashboard() {
               const attendanceQuery = query(
                 collection(db, "attendance"),
                 where("sessionId", "==", sessionDoc.id),
-                where("studentUid", "==", user.uid)
+                where("studentUid", "==", user.uid),
               );
               const attendanceSnap = await getDocs(attendanceQuery);
 
@@ -340,10 +358,6 @@ function Dashboard() {
                   toDateSafe(firstAttendance.timestamp) ||
                   toDateSafe(firstAttendance.date) ||
                   sessionDate;
-
-                if (attDate && isWithinCurrentWeek(attDate)) {
-                  weeklyCounts[attDate.getDay()] += 1;
-                }
 
                 if (attDate) {
                   activityItems.push({
@@ -366,7 +380,7 @@ function Dashboard() {
             chartDays.map((label, index) => ({
               day: label,
               value: weeklyCounts[index],
-            }))
+            })),
           );
 
           activityItems.sort((a, b) => (b.date || 0) - (a.date || 0));
@@ -400,9 +414,11 @@ function Dashboard() {
             ...d.data(),
           }));
 
-          const studentsCount = usersData.filter((u) => u.role === "student").length;
+          const studentsCount = usersData.filter(
+            (u) => u.role === "student",
+          ).length;
           const instructorsCount = usersData.filter(
-            (u) => u.role === "instructor"
+            (u) => u.role === "instructor",
           ).length;
 
           setAdminUsersCount(usersData.length);
@@ -415,7 +431,9 @@ function Dashboard() {
           const usersMap = {};
           usersData.forEach((u) => {
             const fullName =
-              `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.email || "Unknown";
+              `${u.firstName || ""} ${u.lastName || ""}`.trim() ||
+              u.email ||
+              "Unknown";
             usersMap[u.id] = fullName;
           });
 
@@ -423,24 +441,26 @@ function Dashboard() {
             classesData.map(async (cls) => {
               const enrollQuery = query(
                 collection(db, "enrollments"),
-                where("classId", "==", cls.id)
+                where("classId", "==", cls.id),
               );
               const enrollSnap = await getDocs(enrollQuery);
 
               return {
                 ...cls,
-                instructorName: usersMap[cls.instructorId] || "Unknown Instructor",
+                instructorName:
+                  usersMap[cls.instructorId] || "Unknown Instructor",
                 enrolledCount: enrollSnap.size,
               };
-            })
+            }),
           );
 
           setAdminClassesOverview(classesOverviewData);
 
+          // FIX: count ALL sessions by day-of-week regardless of current week
           const weeklyCounts = [0, 0, 0, 0, 0, 0, 0];
           sessionsData.forEach((session) => {
             const sessionDate = toDateSafe(session.createdAt);
-            if (sessionDate && isWithinCurrentWeek(sessionDate)) {
+            if (sessionDate) {
               weeklyCounts[sessionDate.getDay()] += 1;
             }
           });
@@ -449,7 +469,7 @@ function Dashboard() {
             chartDays.map((label, index) => ({
               day: label,
               value: weeklyCounts[index],
-            }))
+            })),
           );
 
           const activityItems = [];
@@ -503,21 +523,21 @@ function Dashboard() {
   }, []);
 
   const todayInstructorClasses = instructorClasses.filter(
-    (item) => normalizeDay(item.day) === todayName
+    (item) => normalizeDay(item.day) === todayName,
   );
 
   const todayStudentClasses = studentEnrollments.filter(
-    (item) => normalizeDay(item.day) === todayName
+    (item) => normalizeDay(item.day) === todayName,
   );
 
   const nextInstructorClass = [...todayInstructorClasses].sort((a, b) =>
-    (a.fromTime || "").localeCompare(b.fromTime || "")
+    (a.fromTime || "").localeCompare(b.fromTime || ""),
   )[0];
 
   const nextStudentClass = [...todayStudentClasses].sort((a, b) =>
-    ((a.fromTime || a.startTime) || "").localeCompare(
-      (b.fromTime || b.startTime) || ""
-    )
+    (a.fromTime || a.startTime || "").localeCompare(
+      b.fromTime || b.startTime || "",
+    ),
   )[0];
 
   if (loading) {
@@ -535,7 +555,7 @@ function Dashboard() {
         <div className="dashboard-page-head">
           <div>
             <h2>Dashboard</h2>
-            <p>Welcome back, here's what's happening today.</p>
+            <p>Welcome back, here&apos;s what&apos;s happening today.</p>
           </div>
 
           <div className="dashboard-head-actions">
@@ -586,36 +606,38 @@ function Dashboard() {
             <h3>{todayStudentClasses.length}</h3>
             <p>
               {nextStudentClass
-                ? `Next: ${
-                    nextStudentClass.fromTime || nextStudentClass.startTime || "—"
-                  }`
+                ? `Next: ${nextStudentClass.fromTime || nextStudentClass.startTime || "—"}`
                 : "No classes today"}
             </p>
           </div>
 
           <div className="stat-card">
             <div className="stat-top">
-              <span>Weekly Attendance</span>
+              <span>Total Attendance</span>
               <div className="stat-icon purple">
                 <FaChartLine />
               </div>
             </div>
-            <h3>{studentWeeklyChart.reduce((sum, item) => sum + item.value, 0)}</h3>
-            <p>Attendance scans this week</p>
+            <h3>
+              {studentWeeklyChart.reduce((sum, item) => sum + item.value, 0)}
+            </h3>
+            <p>All recorded attendance scans</p>
           </div>
         </div>
 
         <div className="dashboard-main-grid">
           <div className="dashboard-large-card">
             <div className="card-head">
-              <h3>Attendance Overview</h3>
-              <span>This Week</span>
+              <h3>Attendance by Day</h3>
+              <span>All Time</span>
             </div>
 
             <div className="bar-chart">
               {studentWeeklyChart.map((item) => (
                 <div key={item.day} className="bar-item">
-                  <div className="bar-value">{item.value}</div>
+                  <div className="bar-value">
+                    {item.value > 0 ? item.value : ""}
+                  </div>
                   <div
                     className="bar-fill"
                     style={{ height: `${Math.max(item.value * 28, 12)}px` }}
@@ -702,8 +724,8 @@ function Dashboard() {
 
                   <div className="schedule-time-pill">
                     <FaClock />
-                    {(item.fromTime || item.startTime || "—")} -{" "}
-                    {(item.toTime || item.endTime || "—")}
+                    {item.fromTime || item.startTime || "—"} -{" "}
+                    {item.toTime || item.endTime || "—"}
                   </div>
                 </div>
               ))}
@@ -731,7 +753,7 @@ function Dashboard() {
         <div className="dashboard-page-head">
           <div>
             <h2>Dashboard</h2>
-            <p>Welcome back, here's what's happening today.</p>
+            <p>Welcome back, here&apos;s what&apos;s happening today.</p>
           </div>
 
           <div className="dashboard-head-actions">
@@ -802,14 +824,16 @@ function Dashboard() {
         <div className="dashboard-main-grid">
           <div className="dashboard-large-card">
             <div className="card-head">
-              <h3>Weekly Activity</h3>
-              <span>This Week</span>
+              <h3>Sessions by Day</h3>
+              <span>All Time</span>
             </div>
 
             <div className="bar-chart">
               {instructorWeeklyChart.map((item) => (
                 <div key={item.day} className="bar-item">
-                  <div className="bar-value">{item.value}</div>
+                  <div className="bar-value">
+                    {item.value > 0 ? item.value : ""}
+                  </div>
                   <div
                     className="bar-fill"
                     style={{ height: `${Math.max(item.value * 28, 12)}px` }}
@@ -889,7 +913,7 @@ function Dashboard() {
 
                   <div className="schedule-time-pill">
                     <FaClock />
-                    {(item.fromTime || "—")} - {(item.toTime || "—")}
+                    {item.fromTime || "—"} - {item.toTime || "—"}
                   </div>
                 </div>
               ))}
@@ -919,7 +943,7 @@ function Dashboard() {
         <div className="dashboard-page-head">
           <div>
             <h2>Admin Dashboard</h2>
-            <p>Welcome back, here’s a full overview of the system.</p>
+            <p>Welcome back, here&apos;s a full overview of the system.</p>
           </div>
 
           <div className="dashboard-head-actions">
@@ -986,14 +1010,16 @@ function Dashboard() {
         <div className="dashboard-main-grid">
           <div className="dashboard-large-card">
             <div className="card-head">
-              <h3>Weekly Sessions Overview</h3>
-              <span>This Week</span>
+              <h3>Sessions by Day</h3>
+              <span>All Time</span>
             </div>
 
             <div className="bar-chart">
               {adminWeeklyChart.map((item) => (
                 <div key={item.day} className="bar-item">
-                  <div className="bar-value">{item.value}</div>
+                  <div className="bar-value">
+                    {item.value > 0 ? item.value : ""}
+                  </div>
                   <div
                     className="bar-fill"
                     style={{ height: `${Math.max(item.value * 28, 12)}px` }}
